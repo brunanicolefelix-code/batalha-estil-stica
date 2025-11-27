@@ -759,59 +759,161 @@
             "Sonho", "Realidade", "Verdade", "Mentira", "Silêncio", "Grito", "Sussurro", "Eco"
         ];
 
-        // ===== IA SIMPLES LOCAL =====
+        // ===== IA MELHORADA =====
         function analisarFrase(frase, figura) {
-            // Verifica se a frase contém palavras-chave relacionadas à figura de linguagem
-            const palavrasChave = {
-                "Metáfora": ["é", "como", "parece", "semelhante"],
-                "Metonímia": ["lê", "bebe", "assiste", "ouve"],
-                "Hipérbole": ["milhões", "infinito", "eternidade", "nunca", "sempre"],
-                "Ironia": ["claro", "óbvio", "lógico", "naturalmente"],
-                "Personificação": ["dança", "canta", "chora", "sorri", "respira"],
-                "Comparação": ["como", "semelhante", "parecido", "igual"],
-                "Antítese": ["mas", "porém", "contudo", "entretanto"],
-                "Paradoxo": ["e", "embora", "apesar"],
-                "Aliteração": ["som", "ritmo", "repetição"],
-                "Onomatopeia": ["som", "barulho", "ruído"],
-            };
+            try {
+                // Verifica se a frase tem tamanho mínimo
+                if (!frase || frase.length < 10) {
+                    return {
+                        correto: false,
+                        explicacao: "A frase é muito curta. Tente escrever uma frase mais completa com pelo menos 10 caracteres.",
+                        sugestao: "Exemplo: 'O coração é um tambor que bate na noite.'"
+                    };
+                }
 
-            const fraseMinuscula = frase.toLowerCase();
-            let correto = false;
-            let explicacao = "";
+                const fraseMinuscula = frase.toLowerCase();
+                const palavrasFrase = frase.split(/\s+/).filter(p => p.length > 2);
 
-            // Verifica se a frase tem comprimento mínimo
-            if (frase.length < 10) {
+                // Verifica se tem pelo menos 5 palavras
+                if (palavrasFrase.length < 5) {
+                    return {
+                        correto: false,
+                        explicacao: "A frase precisa ter mais palavras para demonstrar bem a figura de linguagem.",
+                        sugestao: "Tente expandir sua frase com mais detalhes."
+                    };
+                }
+
+                // Análise por figura de linguagem
+                let correto = false;
+                let explicacao = "";
+
+                switch(figura) {
+                    case "Metáfora":
+                        // Procura por "é" seguido de palavras descritivas
+                        if (/\bé\b/.test(fraseMinuscula) && 
+                            /\b(um|uma|o|a)\b/.test(fraseMinuscula) &&
+                            palavrasFrase.length >= 5) {
+                            correto = true;
+                            explicacao = "Excelente! Sua frase usa bem a metáfora, comparando conceitos de forma poética.";
+                        } else {
+                            explicacao = "A frase não demonstra claramente uma metáfora. Tente usar 'é' para fazer uma comparação poética (ex: 'A vida é um jardim').";
+                        }
+                        break;
+
+                    case "Metonímia":
+                        if (/\b(lê|bebe|assiste|ouve|come|bate|toca)\b/.test(fraseMinuscula)) {
+                            correto = true;
+                            explicacao = "Ótimo! Sua frase demonstra bem o uso de metonímia com uma ação que substitui o conceito.";
+                        } else {
+                            explicacao = "A metonímia substitui uma coisa por outra. Tente usar verbos de ação (lê, bebe, assiste, etc).";
+                        }
+                        break;
+
+                    case "Hipérbole":
+                        if (/\b(milhões|infinito|eternidade|nunca|sempre|mil|bilhões|impossível)\b/.test(fraseMinuscula)) {
+                            correto = true;
+                            explicacao = "Perfeito! Sua frase usa hipérbole com exagero para criar efeito dramático.";
+                        } else {
+                            explicacao = "A hipérbole é um exagero. Tente usar palavras como 'milhões', 'eternidade', 'nunca', 'sempre'.";
+                        }
+                        break;
+
+                    case "Ironia":
+                        if (/\b(claro|óbvio|lógico|naturalmente|é claro|bem|muito bem)\b/.test(fraseMinuscula)) {
+                            correto = true;
+                            explicacao = "Excelente! Sua frase demonstra ironia com uma afirmação que sugere o oposto.";
+                        } else {
+                            explicacao = "A ironia diz o oposto do que se quer expressar. Tente usar palavras que sugiram sarcasmo.";
+                        }
+                        break;
+
+                    case "Personificação":
+                        if (/\b(dança|canta|chora|sorri|respira|pensa|sente|sussurra|grita)\b/.test(fraseMinuscula)) {
+                            correto = true;
+                            explicacao = "Muito bom! Sua frase personifica bem, atribuindo ações humanas a seres inanimados.";
+                        } else {
+                            explicacao = "A personificação atribui qualidades humanas a coisas. Tente usar verbos como 'dança', 'canta', 'chora', 'sorri'.";
+                        }
+                        break;
+
+                    case "Comparação":
+                        if (/\bcomo\b/.test(fraseMinuscula)) {
+                            correto = true;
+                            explicacao = "Ótimo! Sua frase usa bem a comparação com a palavra 'como'.";
+                        } else {
+                            explicacao = "A comparação usa 'como' para relacionar duas coisas. Tente incluir essa palavra.";
+                        }
+                        break;
+
+                    case "Antítese":
+                        if (/\b(mas|porém|contudo|entretanto|todavia)\b/.test(fraseMinuscula)) {
+                            correto = true;
+                            explicacao = "Excelente! Sua frase demonstra antítese com contraste entre ideias.";
+                        } else {
+                            explicacao = "A antítese contrasta ideias opostas. Use conectivos como 'mas', 'porém', 'contudo'.";
+                        }
+                        break;
+
+                    case "Paradoxo":
+                        if (/\b(e|mas|apesar|embora)\b/.test(fraseMinuscula) && palavrasFrase.length >= 6) {
+                            correto = true;
+                            explicacao = "Muito bom! Sua frase apresenta bem um paradoxo com ideias contraditórias.";
+                        } else {
+                            explicacao = "O paradoxo une ideias contraditórias. Tente expressar conceitos que se opõem.";
+                        }
+                        break;
+
+                    case "Onomatopeia":
+                        if (/\b(bang|boom|crash|splash|zzzz|tique|taque|pum|zum)\b/.test(fraseMinuscula)) {
+                            correto = true;
+                            explicacao = "Perfeito! Sua frase usa bem onomatopeia para imitar sons.";
+                        } else {
+                            explicacao = "A onomatopeia imita sons. Tente incluir palavras que representem sons (bang, boom, splash, etc).";
+                        }
+                        break;
+
+                    case "Aliteração":
+                        // Verifica repetição de sons iniciais
+                        const palavras_lista = fraseMinuscula.split(/\s+/);
+                        let temAliteracao = false;
+                        for (let i = 0; i < palavras_lista.length - 1; i++) {
+                            if (palavras_lista[i][0] === palavras_lista[i + 1][0]) {
+                                temAliteracao = true;
+                                break;
+                            }
+                        }
+                        if (temAliteracao) {
+                            correto = true;
+                            explicacao = "Excelente! Sua frase demonstra aliteração com repetição de sons.";
+                        } else {
+                            explicacao = "A aliteração repete sons iniciais de palavras. Tente: 'Sete sábios saltam sobre a seda'.";
+                        }
+                        break;
+
+                    default:
+                        // Para outras figuras, aceita se a frase tem bom tamanho
+                        if (palavrasFrase.length >= 5) {
+                            correto = true;
+                            explicacao = `Boa frase! Você demonstrou o uso de ${figura}.`;
+                        } else {
+                            explicacao = `Tente expandir sua frase para melhor demonstrar ${figura}.`;
+                        }
+                }
+
+                return {
+                    correto: correto,
+                    explicacao: explicacao,
+                    sugestao: ""
+                };
+
+            } catch (erro) {
+                console.error("Erro na análise:", erro);
                 return {
                     correto: false,
-                    explicacao: "A frase é muito curta. Tente escrever uma frase mais completa.",
-                    sugestao: "Adicione mais palavras para melhor demonstrar o uso da figura de linguagem."
+                    explicacao: "Houve um erro ao analisar a frase. Tente novamente!",
+                    sugestao: ""
                 };
             }
-
-            // Análise simples baseada em palavras-chave
-            const chaves = palavrasChave[figura] || [];
-            const contemChaves = chaves.some(chave => fraseMinuscula.includes(chave));
-
-            // Verifica se a frase faz sentido (tem pelo menos 3 palavras)
-            const palavrasFrase = frase.split(" ").filter(p => p.length > 2);
-            const temSentido = palavrasFrase.length >= 3;
-
-            if (contemChaves && temSentido) {
-                correto = true;
-                explicacao = `Ótimo! A frase demonstra bem o uso de ${figura}. A estrutura está clara e coerente.`;
-            } else if (temSentido) {
-                correto = false;
-                explicacao = `A frase está bem estruturada, mas não demonstra claramente o uso de ${figura}. Tente usar palavras que melhor caracterizem essa figura de linguagem.`;
-            } else {
-                correto = false;
-                explicacao = `A frase precisa ser mais clara e demonstrar melhor o uso de ${figura}.`;
-            }
-
-            return {
-                correto: correto,
-                explicacao: explicacao,
-                sugestao: correto ? "" : `Dica: Frases com ${figura} geralmente usam comparações, contrastes ou efeitos sonoros.`
-            };
         }
 
         // Estado Global
@@ -906,42 +1008,48 @@
 
             // Simular análise com delay
             setTimeout(() => {
-                const resultado = analisarFrase(frase, currentFigura);
-                const pontos = resultado.correto ? 10 : 0;
+                try {
+                    const resultado = analisarFrase(frase, currentFigura);
+                    const pontos = resultado.correto ? 10 : 0;
 
-                // Salvar no histórico local
-                const fraseData = {
-                    nome: playerName,
-                    frase: frase,
-                    figura: currentFigura,
-                    palavra: currentPalavra,
-                    correto: resultado.correto,
-                    explicacao: resultado.explicacao,
-                    sugestao: resultado.sugestao,
-                    pontos: pontos,
-                    timestamp: new Date().toISOString()
-                };
-
-                historicoFrases[currentRoom].push(fraseData);
-
-                // Atualizar ranking
-                if (!rankingPorSala[currentRoom][playerName]) {
-                    rankingPorSala[currentRoom][playerName] = {
-                        pontos: 0,
-                        frases_corretas: 0
+                    // Salvar no histórico local
+                    const fraseData = {
+                        nome: playerName,
+                        frase: frase,
+                        figura: currentFigura,
+                        palavra: currentPalavra,
+                        correto: resultado.correto,
+                        explicacao: resultado.explicacao,
+                        sugestao: resultado.sugestao,
+                        pontos: pontos,
+                        timestamp: new Date().toISOString()
                     };
+
+                    historicoFrases[currentRoom].push(fraseData);
+
+                    // Atualizar ranking
+                    if (!rankingPorSala[currentRoom][playerName]) {
+                        rankingPorSala[currentRoom][playerName] = {
+                            pontos: 0,
+                            frases_corretas: 0
+                        };
+                    }
+                    rankingPorSala[currentRoom][playerName].pontos += pontos;
+                    rankingPorSala[currentRoom][playerName].frases_corretas += (pontos > 0 ? 1 : 0);
+
+                    // Limpar campos
+                    document.getElementById('fraseUsuario').value = '';
+                    statusDiv.innerHTML = `<div class="status-message status-success">✓ Frase enviada com sucesso! ${pontos > 0 ? `Você ganhou ${pontos} pontos!` : 'Tente novamente!'}</div>`;
+
+                    // Recarregar histórico e ranking
+                    carregarHistorico();
+                    carregarRanking();
+                    submitBtn.disabled = false;
+                } catch (erro) {
+                    console.error("Erro:", erro);
+                    statusDiv.innerHTML = '<div class="status-message status-error">Erro ao processar. Tente novamente!</div>';
+                    submitBtn.disabled = false;
                 }
-                rankingPorSala[currentRoom][playerName].pontos += pontos;
-                rankingPorSala[currentRoom][playerName].frases_corretas += (pontos > 0 ? 1 : 0);
-
-                // Limpar campos
-                document.getElementById('fraseUsuario').value = '';
-                statusDiv.innerHTML = `<div class="status-message status-success">✓ Frase enviada com sucesso! ${pontos > 0 ? `Você ganhou ${pontos} pontos!` : 'Tente novamente!'}</div>`;
-
-                // Recarregar histórico e ranking
-                carregarHistorico();
-                carregarRanking();
-                submitBtn.disabled = false;
             }, 800);
         };
 
