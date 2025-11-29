@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jogo de Figuras de Linguagem - Medieval</title>
+    <title>Jogo de Figuras de Linguagem - Multiplayer Medieval</title>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js"></script>
     <style>
         * {
             margin: 0;
@@ -20,7 +22,6 @@
             flex-direction: column;
         }
 
-        /* Header */
         header {
             background: linear-gradient(180deg, #3d2817 0%, #2d1810 100%);
             border-bottom: 3px solid #8b7355;
@@ -41,10 +42,9 @@
             font-size: 0.9em;
         }
 
-        /* Main Container */
         .container {
             flex: 1;
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 30px auto;
             width: 100%;
             padding: 0 20px;
@@ -72,7 +72,6 @@
             color: #d4af37;
             font-size: 2em;
             margin-bottom: 30px;
-            text-align: center;
         }
 
         .login-form {
@@ -86,7 +85,6 @@
         .login-form label {
             color: #c9a961;
             font-weight: bold;
-            font-size: 1.1em;
         }
 
         .login-form input {
@@ -96,11 +94,6 @@
             padding: 15px;
             border-radius: 5px;
             font-family: 'Georgia', serif;
-            font-size: 1em;
-        }
-
-        .login-form input::placeholder {
-            color: #8b7355;
         }
 
         .login-form input:focus {
@@ -119,17 +112,11 @@
             font-weight: bold;
             font-size: 1.1em;
             transition: all 0.3s ease;
-            margin-top: 10px;
         }
 
         .login-button:hover {
             background: linear-gradient(135deg, #3d6b1f 0%, #2d5016 100%);
             transform: scale(1.02);
-        }
-
-        .login-button:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
         }
 
         /* Rooms Selection */
@@ -165,11 +152,6 @@
             color: #d4af37;
             font-size: 1.8em;
             margin-bottom: 10px;
-        }
-
-        .room-card p {
-            color: #c9a961;
-            margin-bottom: 15px;
         }
 
         .room-card button {
@@ -219,7 +201,6 @@
 
         .player-info {
             color: #c9a961;
-            font-size: 0.95em;
         }
 
         .back-button {
@@ -251,56 +232,50 @@
             gap: 20px;
         }
 
-        /* Buttons Section */
-        .buttons-section {
+        /* Timer Section */
+        .timer-section {
             background: rgba(0, 0, 0, 0.3);
             padding: 20px;
             border-radius: 8px;
             border: 2px solid #8b7355;
-        }
-
-        .buttons-section h3 {
-            color: #d4af37;
-            margin-bottom: 15px;
-            font-size: 1.2em;
-        }
-
-        .button-group {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-
-        .button-group button {
-            flex: 1;
-            background: linear-gradient(135deg, #d4af37 0%, #aa8c2c 100%);
-            color: #1a1a1a;
-            border: none;
-            padding: 12px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: all 0.3s ease;
-        }
-
-        .button-group button:hover {
-            background: linear-gradient(135deg, #e8c547 0%, #c9a961 100%);
-            transform: scale(1.02);
-        }
-
-        .display-box {
-            background: rgba(0, 0, 0, 0.5);
-            border: 2px solid #d4af37;
-            padding: 15px;
-            border-radius: 5px;
             text-align: center;
-            min-height: 50px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            grid-column: 1 / -1;
+        }
+
+        .timer-display {
+            font-size: 3em;
             color: #d4af37;
             font-weight: bold;
-            font-size: 1.1em;
+            margin: 20px 0;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .timer-label {
+            color: #c9a961;
+            font-size: 1.2em;
+            margin-bottom: 10px;
+        }
+
+        /* Category Display */
+        .category-section {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            border-radius: 8px;
+            border: 2px solid #8b7355;
+            text-align: center;
+            grid-column: 1 / -1;
+        }
+
+        .category-display {
+            font-size: 2.5em;
+            color: #d4af37;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+
+        .category-label {
+            color: #c9a961;
+            font-size: 1.2em;
         }
 
         /* Input Section */
@@ -314,14 +289,12 @@
         .input-section h3 {
             color: #d4af37;
             margin-bottom: 15px;
-            font-size: 1.2em;
         }
 
         .input-group {
             display: flex;
             flex-direction: column;
             gap: 15px;
-            margin-bottom: 15px;
         }
 
         .input-group label {
@@ -336,19 +309,19 @@
             padding: 12px;
             border-radius: 5px;
             font-family: 'Georgia', serif;
-            font-size: 1em;
-            resize: vertical;
             min-height: 100px;
-        }
-
-        .input-group textarea::placeholder {
-            color: #8b7355;
+            resize: vertical;
         }
 
         .input-group textarea:focus {
             outline: none;
             border-color: #d4af37;
             box-shadow: 0 0 8px rgba(212, 175, 55, 0.3);
+        }
+
+        .input-group textarea:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
         }
 
         .submit-button {
@@ -363,7 +336,7 @@
             transition: all 0.3s ease;
         }
 
-        .submit-button:hover {
+        .submit-button:hover:not(:disabled) {
             background: linear-gradient(135deg, #3d6b1f 0%, #2d5016 100%);
             transform: scale(1.02);
         }
@@ -373,8 +346,8 @@
             cursor: not-allowed;
         }
 
-        /* History Section */
-        .history-section {
+        /* Players List */
+        .players-section {
             background: rgba(0, 0, 0, 0.3);
             padding: 20px;
             border-radius: 8px;
@@ -382,80 +355,51 @@
             grid-column: 1 / -1;
         }
 
-        .history-section h3 {
+        .players-section h3 {
             color: #d4af37;
             margin-bottom: 15px;
-            font-size: 1.2em;
         }
 
-        .history-list {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            max-height: 400px;
-            overflow-y: auto;
-        }
-
-        .history-item {
-            background: rgba(0, 0, 0, 0.5);
-            border-left: 4px solid #d4af37;
-            padding: 15px;
-            border-radius: 5px;
-        }
-
-        .history-item-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-            flex-wrap: wrap;
+        .players-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
             gap: 10px;
         }
 
-        .history-item-name {
+        .player-card {
+            background: rgba(0, 0, 0, 0.5);
+            border: 2px solid #8b7355;
+            padding: 15px;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        .player-name {
             color: #d4af37;
             font-weight: bold;
+            margin-bottom: 8px;
         }
 
-        .history-item-status {
-            padding: 5px 10px;
-            border-radius: 3px;
+        .player-status {
+            color: #c9a961;
             font-size: 0.9em;
-            font-weight: bold;
         }
 
-        .status-correct {
-            background: #2d5016;
+        .status-waiting {
+            color: #ffa500;
+        }
+
+        .status-submitted {
             color: #7cfc00;
         }
 
-        .status-incorrect {
-            background: #5a1a1a;
-            color: #ff6b6b;
-        }
-
-        .history-item-phrase {
-            color: #e8d4b8;
-            margin-bottom: 8px;
-            font-style: italic;
-        }
-
-        .history-item-correction {
-            color: #c9a961;
-            font-size: 0.95em;
-            background: rgba(0, 0, 0, 0.3);
-            padding: 10px;
-            border-radius: 3px;
-            margin-top: 8px;
-        }
-
-        .history-item-points {
+        .player-points {
             color: #d4af37;
             font-weight: bold;
             margin-top: 8px;
         }
 
-        /* Ranking Section */
+        /* Ranking */
         .ranking-section {
             background: rgba(0, 0, 0, 0.3);
             padding: 20px;
@@ -467,7 +411,6 @@
         .ranking-section h3 {
             color: #d4af37;
             margin-bottom: 15px;
-            font-size: 1.2em;
         }
 
         .ranking-table {
@@ -475,15 +418,12 @@
             border-collapse: collapse;
         }
 
-        .ranking-table thead {
-            background: rgba(0, 0, 0, 0.5);
-        }
-
         .ranking-table th {
             color: #d4af37;
             padding: 12px;
             text-align: left;
             border-bottom: 2px solid #8b7355;
+            background: rgba(0, 0, 0, 0.5);
         }
 
         .ranking-table td {
@@ -496,40 +436,9 @@
             background: rgba(212, 175, 55, 0.1);
         }
 
-        .ranking-position {
-            color: #d4af37;
-            font-weight: bold;
-            font-size: 1.2em;
-        }
-
-        /* Footer */
-        footer {
-            background: linear-gradient(180deg, #2d1810 0%, #1a0f0a 100%);
-            border-top: 3px solid #8b7355;
-            padding: 20px;
-            text-align: center;
-            margin-top: auto;
-            color: #c9a961;
-            font-size: 0.9em;
-        }
-
-        /* Loading and Status */
-        .loading {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid #8b7355;
-            border-top-color: #d4af37;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
+        /* Status Message */
         .status-message {
-            padding: 10px;
+            padding: 15px;
             border-radius: 5px;
             margin-top: 10px;
             text-align: center;
@@ -546,6 +455,22 @@
             color: #ff6b6b;
         }
 
+        .status-info {
+            background: #3d2817;
+            color: #d4af37;
+        }
+
+        /* Footer */
+        footer {
+            background: linear-gradient(180deg, #2d1810 0%, #1a0f0a 100%);
+            border-top: 3px solid #8b7355;
+            padding: 20px;
+            text-align: center;
+            margin-top: auto;
+            color: #c9a961;
+            font-size: 0.9em;
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
             .game-content {
@@ -556,60 +481,26 @@
                 font-size: 1.8em;
             }
 
-            .game-header {
-                flex-direction: column;
-                align-items: stretch;
+            .timer-display {
+                font-size: 2em;
             }
 
-            .game-header h2 {
-                font-size: 1.5em;
+            .category-display {
+                font-size: 1.8em;
             }
-
-            .ranking-table {
-                font-size: 0.9em;
-            }
-
-            .ranking-table th,
-            .ranking-table td {
-                padding: 8px;
-            }
-
-            .login-screen {
-                min-height: 300px;
-                padding: 30px 20px;
-            }
-        }
-
-        /* Scrollbar Styling */
-        .history-list::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        .history-list::-webkit-scrollbar-track {
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 10px;
-        }
-
-        .history-list::-webkit-scrollbar-thumb {
-            background: #8b7355;
-            border-radius: 10px;
-        }
-
-        .history-list::-webkit-scrollbar-thumb:hover {
-            background: #d4af37;
         }
     </style>
 </head>
 <body>
     <header>
-        <h1>⚔️ Jogo de Figuras de Linguagem ⚔️</h1>
-        <p>Crie frases épicas com figuras de linguagem</p>
+        <h1>⚔️ Jogo de Figuras de Linguagem - Multiplayer ⚔️</h1>
+        <p>Crie frases épicas com figuras de linguagem em tempo real</p>
     </header>
 
     <div class="container">
         <!-- Login Screen -->
         <div id="loginScreen" class="login-screen">
-            <h2>🏰 Bem-vindo ao Jogo! 🏰</h2>
+            <h2>🏰 Bem-vindo ao Jogo Multiplayer! 🏰</h2>
             <form class="login-form" onsubmit="iniciarJogo(event)">
                 <label for="playerName">Digite seu nome de jogador:</label>
                 <input 
@@ -657,44 +548,41 @@
                 </div>
             </div>
 
+            <!-- Timer Section -->
+            <div class="timer-section">
+                <div class="timer-label" id="timerLabel">Preparando...</div>
+                <div class="timer-display" id="timerDisplay">--</div>
+            </div>
+
+            <!-- Category Section -->
+            <div class="category-section" id="categorySection" style="display: none;">
+                <div class="category-label">Figura de Linguagem:</div>
+                <div class="category-display" id="categoryDisplay">-</div>
+            </div>
+
             <div class="game-content">
-                <!-- Left Column: Sorteios -->
-                <div class="game-column">
-                    <div class="buttons-section">
-                        <h3>🎲 Sorteios</h3>
-                        <div class="button-group">
-                            <button onclick="sortearPalavra()">Sortear Palavra</button>
-                            <button onclick="sortearFigura()">Sortear Figura</button>
-                        </div>
-                        <div class="display-box" id="palavraSorteada">Clique para sortear uma palavra</div>
-                        <div style="margin-top: 15px;"></div>
-                        <div class="display-box" id="figuraSorteada">Clique para sortear uma figura</div>
+                <!-- Input Section -->
+                <div class="input-section">
+                    <h3>✍️ Sua Frase</h3>
+                    <div class="input-group">
+                        <textarea 
+                            id="fraseUsuario" 
+                            placeholder="Escreva sua frase aqui..."
+                            disabled
+                        ></textarea>
                     </div>
+                    <button class="submit-button" id="submitBtn" onclick="enviarFrase()" disabled>Enviar Frase</button>
+                    <div id="statusMessage"></div>
                 </div>
 
-                <!-- Right Column: Input -->
-                <div class="game-column">
-                    <div class="input-section">
-                        <h3>✍️ Sua Contribuição</h3>
-                        <div class="input-group">
-                            <label for="fraseUsuario">Sua Frase:</label>
-                            <textarea id="fraseUsuario" placeholder="Escreva uma frase usando a figura de linguagem sorteada..."></textarea>
-                        </div>
-                        <button class="submit-button" id="submitBtn" onclick="enviarFrase()">Enviar Frase</button>
-                        <div id="statusMessage"></div>
-                    </div>
+                <!-- Players List -->
+                <div class="players-section">
+                    <h3>👥 Jogadores na Sala</h3>
+                    <div class="players-list" id="playersList"></div>
                 </div>
             </div>
 
-            <!-- History Section -->
-            <div class="history-section">
-                <h3>📜 Histórico de Frases</h3>
-                <div class="history-list" id="historyList">
-                    <p style="color: #8b7355;">Nenhuma frase enviada ainda...</p>
-                </div>
-            </div>
-
-            <!-- Ranking Section -->
+            <!-- Ranking -->
             <div class="ranking-section">
                 <h3>🏆 Ranking da Sala</h3>
                 <table class="ranking-table">
@@ -708,7 +596,7 @@
                     </thead>
                     <tbody id="rankingBody">
                         <tr>
-                            <td colspan="4" style="text-align: center; color: #8b7355;">Nenhum jogador ainda...</td>
+                            <td colspan="4" style="text-align: center; color: #8b7355;">Carregando...</td>
                         </tr>
                     </tbody>
                 </table>
@@ -721,208 +609,40 @@
     </footer>
 
     <script>
-        // ===== DADOS LOCAIS (RESETAM AO SAIR DA PÁGINA) =====
-        const historicoFrases = {};
-        const rankingPorSala = {};
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyB18wCa-yEhMYQkxY8ZlBoRIvBS1OAmjqg",
+            authDomain: "estilistica.firebaseapp.com",
+            databaseURL: "https://estilistica-default-rtdb.firebaseio.com",
+            projectId: "estilistica",
+            storageBucket: "estilistica.firebasestorage.app",
+            messagingSenderId: "622934874774",
+            appId: "1:622934874774:web:2ca073255bbf1b2d8f40b7",
+            measurementId: "G-KJVPBTNTRJ"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
 
         // Figuras de Linguagem
         const figurasLinguagem = [
-            "Metáfora",
-            "Metonímia",
-            "Sinédoque",
-            "Antítese",
-            "Paradoxo",
-            "Hipérbole",
-            "Ironia",
-            "Personificação",
-            "Aliteração",
-            "Assonância",
-            "Onomatopeia",
-            "Comparação",
-            "Catacrese",
-            "Oxímoro",
-            "Pleonasmo",
-            "Tautologia",
-            "Zeugma",
-            "Elipse",
-            "Anacoluto",
-            "Inversão"
+            "Metáfora", "Metonímia", "Sinédoque", "Antítese", "Paradoxo",
+            "Hipérbole", "Ironia", "Personificação", "Aliteração", "Assonância",
+            "Onomatopeia", "Comparação", "Catacrese", "Oxímoro", "Pleonasmo",
+            "Tautologia", "Zeugma", "Elipse", "Anacoluto", "Inversão"
         ];
 
-        // Palavras para Sorteio
-        const palavras = [
-            "Coração", "Tempestade", "Luz", "Escuridão", "Fogo", "Gelo", "Vento", "Chuva",
-            "Montanha", "Rio", "Floresta", "Deserto", "Mar", "Céu", "Terra", "Ar",
-            "Amor", "Ódio", "Medo", "Esperança", "Raiva", "Tristeza", "Alegria", "Paz",
-            "Guerra", "Vitória", "Derrota", "Coragem", "Fraqueza", "Força", "Poder", "Glória",
-            "Sombra", "Espelho", "Ponte", "Porta", "Caminho", "Jornada", "Destino", "Sorte",
-            "Sonho", "Realidade", "Verdade", "Mentira", "Silêncio", "Grito", "Sussurro", "Eco"
-        ];
-
-        // ===== IA MELHORADA =====
-        function analisarFrase(frase, figura) {
-            try {
-                // Verifica se a frase tem tamanho mínimo
-                if (!frase || frase.length < 10) {
-                    return {
-                        correto: false,
-                        explicacao: "A frase é muito curta. Tente escrever uma frase mais completa com pelo menos 10 caracteres.",
-                        sugestao: "Exemplo: 'O coração é um tambor que bate na noite.'"
-                    };
-                }
-
-                const fraseMinuscula = frase.toLowerCase();
-                const palavrasFrase = frase.split(/\s+/).filter(p => p.length > 2);
-
-                // Verifica se tem pelo menos 5 palavras
-                if (palavrasFrase.length < 5) {
-                    return {
-                        correto: false,
-                        explicacao: "A frase precisa ter mais palavras para demonstrar bem a figura de linguagem.",
-                        sugestao: "Tente expandir sua frase com mais detalhes."
-                    };
-                }
-
-                // Análise por figura de linguagem
-                let correto = false;
-                let explicacao = "";
-
-                switch(figura) {
-                    case "Metáfora":
-                        // Procura por "é" seguido de palavras descritivas
-                        if (/\bé\b/.test(fraseMinuscula) && 
-                            /\b(um|uma|o|a)\b/.test(fraseMinuscula) &&
-                            palavrasFrase.length >= 5) {
-                            correto = true;
-                            explicacao = "Excelente! Sua frase usa bem a metáfora, comparando conceitos de forma poética.";
-                        } else {
-                            explicacao = "A frase não demonstra claramente uma metáfora. Tente usar 'é' para fazer uma comparação poética (ex: 'A vida é um jardim').";
-                        }
-                        break;
-
-                    case "Metonímia":
-                        if (/\b(lê|bebe|assiste|ouve|come|bate|toca)\b/.test(fraseMinuscula)) {
-                            correto = true;
-                            explicacao = "Ótimo! Sua frase demonstra bem o uso de metonímia com uma ação que substitui o conceito.";
-                        } else {
-                            explicacao = "A metonímia substitui uma coisa por outra. Tente usar verbos de ação (lê, bebe, assiste, etc).";
-                        }
-                        break;
-
-                    case "Hipérbole":
-                        if (/\b(milhões|infinito|eternidade|nunca|sempre|mil|bilhões|impossível)\b/.test(fraseMinuscula)) {
-                            correto = true;
-                            explicacao = "Perfeito! Sua frase usa hipérbole com exagero para criar efeito dramático.";
-                        } else {
-                            explicacao = "A hipérbole é um exagero. Tente usar palavras como 'milhões', 'eternidade', 'nunca', 'sempre'.";
-                        }
-                        break;
-
-                    case "Ironia":
-                        if (/\b(claro|óbvio|lógico|naturalmente|é claro|bem|muito bem)\b/.test(fraseMinuscula)) {
-                            correto = true;
-                            explicacao = "Excelente! Sua frase demonstra ironia com uma afirmação que sugere o oposto.";
-                        } else {
-                            explicacao = "A ironia diz o oposto do que se quer expressar. Tente usar palavras que sugiram sarcasmo.";
-                        }
-                        break;
-
-                    case "Personificação":
-                        if (/\b(dança|canta|chora|sorri|respira|pensa|sente|sussurra|grita)\b/.test(fraseMinuscula)) {
-                            correto = true;
-                            explicacao = "Muito bom! Sua frase personifica bem, atribuindo ações humanas a seres inanimados.";
-                        } else {
-                            explicacao = "A personificação atribui qualidades humanas a coisas. Tente usar verbos como 'dança', 'canta', 'chora', 'sorri'.";
-                        }
-                        break;
-
-                    case "Comparação":
-                        if (/\bcomo\b/.test(fraseMinuscula)) {
-                            correto = true;
-                            explicacao = "Ótimo! Sua frase usa bem a comparação com a palavra 'como'.";
-                        } else {
-                            explicacao = "A comparação usa 'como' para relacionar duas coisas. Tente incluir essa palavra.";
-                        }
-                        break;
-
-                    case "Antítese":
-                        if (/\b(mas|porém|contudo|entretanto|todavia)\b/.test(fraseMinuscula)) {
-                            correto = true;
-                            explicacao = "Excelente! Sua frase demonstra antítese com contraste entre ideias.";
-                        } else {
-                            explicacao = "A antítese contrasta ideias opostas. Use conectivos como 'mas', 'porém', 'contudo'.";
-                        }
-                        break;
-
-                    case "Paradoxo":
-                        if (/\b(e|mas|apesar|embora)\b/.test(fraseMinuscula) && palavrasFrase.length >= 6) {
-                            correto = true;
-                            explicacao = "Muito bom! Sua frase apresenta bem um paradoxo com ideias contraditórias.";
-                        } else {
-                            explicacao = "O paradoxo une ideias contraditórias. Tente expressar conceitos que se opõem.";
-                        }
-                        break;
-
-                    case "Onomatopeia":
-                        if (/\b(bang|boom|crash|splash|zzzz|tique|taque|pum|zum)\b/.test(fraseMinuscula)) {
-                            correto = true;
-                            explicacao = "Perfeito! Sua frase usa bem onomatopeia para imitar sons.";
-                        } else {
-                            explicacao = "A onomatopeia imita sons. Tente incluir palavras que representem sons (bang, boom, splash, etc).";
-                        }
-                        break;
-
-                    case "Aliteração":
-                        // Verifica repetição de sons iniciais
-                        const palavras_lista = fraseMinuscula.split(/\s+/);
-                        let temAliteracao = false;
-                        for (let i = 0; i < palavras_lista.length - 1; i++) {
-                            if (palavras_lista[i][0] === palavras_lista[i + 1][0]) {
-                                temAliteracao = true;
-                                break;
-                            }
-                        }
-                        if (temAliteracao) {
-                            correto = true;
-                            explicacao = "Excelente! Sua frase demonstra aliteração com repetição de sons.";
-                        } else {
-                            explicacao = "A aliteração repete sons iniciais de palavras. Tente: 'Sete sábios saltam sobre a seda'.";
-                        }
-                        break;
-
-                    default:
-                        // Para outras figuras, aceita se a frase tem bom tamanho
-                        if (palavrasFrase.length >= 5) {
-                            correto = true;
-                            explicacao = `Boa frase! Você demonstrou o uso de ${figura}.`;
-                        } else {
-                            explicacao = `Tente expandir sua frase para melhor demonstrar ${figura}.`;
-                        }
-                }
-
-                return {
-                    correto: correto,
-                    explicacao: explicacao,
-                    sugestao: ""
-                };
-
-            } catch (erro) {
-                console.error("Erro na análise:", erro);
-                return {
-                    correto: false,
-                    explicacao: "Houve um erro ao analisar a frase. Tente novamente!",
-                    sugestao: ""
-                };
-            }
-        }
-
-        // Estado Global
-        let currentRoom = null;
-        let currentPalavra = null;
-        let currentFigura = null;
+        // Game State
         let playerName = null;
+        let currentRoom = null;
+        let playerId = null;
+        let gameState = null;
+        let roundActive = false;
+        let timerInterval = null;
+        let timeRemaining = 0;
 
-        // Funções Públicas
+        // Initialize
         window.iniciarJogo = function(event) {
             event.preventDefault();
             playerName = document.getElementById('playerName').value.trim();
@@ -932,181 +652,289 @@
                 return;
             }
 
+            playerId = 'player_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+            
             document.getElementById('loginScreen').classList.add('hidden');
             document.getElementById('roomsSection').classList.remove('hidden');
             document.getElementById('playerNameDisplay').textContent = `👤 Jogador: ${playerName}`;
         };
 
         window.mudarJogador = function() {
+            if (currentRoom) {
+                backToRooms();
+            }
             playerName = null;
-            currentRoom = null;
-            currentPalavra = null;
-            currentFigura = null;
+            playerId = null;
             document.getElementById('loginScreen').classList.remove('hidden');
             document.getElementById('roomsSection').classList.add('hidden');
-            document.getElementById('gameArea').classList.remove('active');
             document.getElementById('playerName').value = '';
             document.getElementById('playerName').focus();
         };
 
         window.enterRoom = function(roomNumber) {
             currentRoom = roomNumber;
-            if (!historicoFrases[roomNumber]) {
-                historicoFrases[roomNumber] = [];
-            }
-            if (!rankingPorSala[roomNumber]) {
-                rankingPorSala[roomNumber] = {};
-            }
             
             document.getElementById('roomsSection').classList.add('hidden');
             document.getElementById('gameArea').classList.add('active');
             document.getElementById('roomTitle').textContent = `Sala ${roomNumber}`;
             document.getElementById('gamePlayerInfo').textContent = `👤 ${playerName}`;
-            carregarHistorico();
-            carregarRanking();
+
+            // Register player in Firebase
+            const playerRef = database.ref(`salas/${currentRoom}/jogadores/${playerId}`);
+            playerRef.set({
+                nome: playerName,
+                pontos: 0,
+                frases_corretas: 0,
+                frase_enviada: false,
+                timestamp: firebase.database.ServerValue.TIMESTAMP
+            });
+
+            // Listen to game state
+            const gameStateRef = database.ref(`salas/${currentRoom}/estado`);
+            gameStateRef.on('value', (snapshot) => {
+                gameState = snapshot.val();
+                if (gameState) {
+                    updateGameUI();
+                }
+            });
+
+            // Listen to players
+            const playersRef = database.ref(`salas/${currentRoom}/jogadores`);
+            playersRef.on('value', (snapshot) => {
+                updatePlayersList(snapshot.val());
+                updateRanking();
+            });
+
+            // Start game loop
+            startGameLoop();
         };
 
         window.backToRooms = function() {
+            if (currentRoom) {
+                // Remove player from Firebase
+                database.ref(`salas/${currentRoom}/jogadores/${playerId}`).remove();
+                
+                // Stop listeners
+                database.ref(`salas/${currentRoom}/estado`).off();
+                database.ref(`salas/${currentRoom}/jogadores`).off();
+            }
+
             currentRoom = null;
-            currentPalavra = null;
-            currentFigura = null;
+            roundActive = false;
+            clearInterval(timerInterval);
+            
             document.getElementById('roomsSection').classList.remove('hidden');
             document.getElementById('gameArea').classList.remove('active');
             document.getElementById('fraseUsuario').value = '';
+            document.getElementById('fraseUsuario').disabled = true;
+            document.getElementById('submitBtn').disabled = true;
             document.getElementById('statusMessage').innerHTML = '';
-            document.getElementById('palavraSorteada').textContent = 'Clique para sortear uma palavra';
-            document.getElementById('figuraSorteada').textContent = 'Clique para sortear uma figura';
+            document.getElementById('categorySection').style.display = 'none';
         };
 
-        window.sortearPalavra = function() {
-            currentPalavra = palavras[Math.floor(Math.random() * palavras.length)];
-            document.getElementById('palavraSorteada').textContent = `📝 ${currentPalavra}`;
-        };
-
-        window.sortearFigura = function() {
-            currentFigura = figurasLinguagem[Math.floor(Math.random() * figurasLinguagem.length)];
-            document.getElementById('figuraSorteada').textContent = `🎭 ${currentFigura}`;
-        };
-
-        window.enviarFrase = function() {
-            const frase = document.getElementById('fraseUsuario').value.trim();
-            const statusDiv = document.getElementById('statusMessage');
-
-            if (!frase) {
-                statusDiv.innerHTML = '<div class="status-message status-error">Por favor, escreva uma frase!</div>';
-                return;
-            }
-
-            if (!currentFigura) {
-                statusDiv.innerHTML = '<div class="status-message status-error">Por favor, sorteie uma figura de linguagem!</div>';
-                return;
-            }
-
-            const submitBtn = document.getElementById('submitBtn');
-            submitBtn.disabled = true;
-            statusDiv.innerHTML = '<div class="status-message" style="background: #3d2817; color: #d4af37;"><span class="loading"></span> Analisando sua frase...</div>';
-
-            // Simular análise com delay
-            setTimeout(() => {
-                try {
-                    const resultado = analisarFrase(frase, currentFigura);
-                    const pontos = resultado.correto ? 10 : 0;
-
-                    // Salvar no histórico local
-                    const fraseData = {
-                        nome: playerName,
-                        frase: frase,
-                        figura: currentFigura,
-                        palavra: currentPalavra,
-                        correto: resultado.correto,
-                        explicacao: resultado.explicacao,
-                        sugestao: resultado.sugestao,
-                        pontos: pontos,
-                        timestamp: new Date().toISOString()
-                    };
-
-                    historicoFrases[currentRoom].push(fraseData);
-
-                    // Atualizar ranking
-                    if (!rankingPorSala[currentRoom][playerName]) {
-                        rankingPorSala[currentRoom][playerName] = {
-                            pontos: 0,
-                            frases_corretas: 0
+        function startGameLoop() {
+            setInterval(() => {
+                const now = Date.now();
+                const gameStateRef = database.ref(`salas/${currentRoom}/estado`);
+                
+                gameStateRef.once('value', (snapshot) => {
+                    let state = snapshot.val();
+                    
+                    if (!state) {
+                        // Initialize game state
+                        state = {
+                            fase: 'preparacao',
+                            tempo_inicio: now,
+                            categoria: null,
+                            rodada: 1
                         };
+                        gameStateRef.set(state);
                     }
-                    rankingPorSala[currentRoom][playerName].pontos += pontos;
-                    rankingPorSala[currentRoom][playerName].frases_corretas += (pontos > 0 ? 1 : 0);
 
-                    // Limpar campos
-                    document.getElementById('fraseUsuario').value = '';
-                    statusDiv.innerHTML = `<div class="status-message status-success">✓ Frase enviada com sucesso! ${pontos > 0 ? `Você ganhou ${pontos} pontos!` : 'Tente novamente!'}</div>`;
+                    const tempoDecorrido = now - state.tempo_inicio;
+                    
+                    if (state.fase === 'preparacao') {
+                        if (tempoDecorrido < 10000) {
+                            // Preparation phase
+                            timeRemaining = Math.ceil((10000 - tempoDecorrido) / 1000);
+                            updateTimer('Preparando...', timeRemaining);
+                            roundActive = false;
+                        } else {
+                            // Start writing phase
+                            const novaCategoria = figurasLinguagem[Math.floor(Math.random() * figurasLinguagem.length)];
+                            gameStateRef.update({
+                                fase: 'escrita',
+                                tempo_inicio: now,
+                                categoria: novaCategoria
+                            });
+                        }
+                    } else if (state.fase === 'escrita') {
+                        if (tempoDecorrido < 20000) {
+                            // Writing phase
+                            timeRemaining = Math.ceil((20000 - tempoDecorrido) / 1000);
+                            updateTimer('Tempo para escrever:', timeRemaining);
+                            roundActive = true;
+                            document.getElementById('categorySection').style.display = 'block';
+                            document.getElementById('categoryDisplay').textContent = `🎭 ${state.categoria}`;
+                            document.getElementById('fraseUsuario').disabled = false;
+                            document.getElementById('submitBtn').disabled = false;
+                        } else {
+                            // End round
+                            roundActive = false;
+                            document.getElementById('fraseUsuario').disabled = true;
+                            document.getElementById('submitBtn').disabled = true;
+                            document.getElementById('statusMessage').innerHTML = '<div class="status-message status-info">Tempo encerrado! Próxima rodada em breve...</div>';
+                            
+                            // Reset for next round after 3 seconds
+                            setTimeout(() => {
+                                gameStateRef.update({
+                                    fase: 'preparacao',
+                                    tempo_inicio: Date.now(),
+                                    categoria: null,
+                                    rodada: (state.rodada || 1) + 1
+                                });
+                            }, 3000);
+                        }
+                    }
+                });
+            }, 500);
+        }
 
-                    // Recarregar histórico e ranking
-                    carregarHistorico();
-                    carregarRanking();
-                    submitBtn.disabled = false;
-                } catch (erro) {
-                    console.error("Erro:", erro);
-                    statusDiv.innerHTML = '<div class="status-message status-error">Erro ao processar. Tente novamente!</div>';
-                    submitBtn.disabled = false;
-                }
-            }, 800);
-        };
+        function updateTimer(label, seconds) {
+            document.getElementById('timerLabel').textContent = label;
+            document.getElementById('timerDisplay').textContent = seconds;
+        }
 
-        function carregarHistorico() {
-            const historyList = document.getElementById('historyList');
-            const frases = historicoFrases[currentRoom] || [];
+        function updateGameUI() {
+            if (!gameState) return;
 
-            if (frases.length === 0) {
-                historyList.innerHTML = '<p style="color: #8b7355;">Nenhuma frase enviada ainda...</p>';
+            if (gameState.categoria) {
+                document.getElementById('categorySection').style.display = 'block';
+                document.getElementById('categoryDisplay').textContent = `🎭 ${gameState.categoria}`;
+            }
+        }
+
+        function updatePlayersList(players) {
+            const playersList = document.getElementById('playersList');
+            if (!players) {
+                playersList.innerHTML = '<p style="color: #8b7355;">Nenhum jogador...</p>';
                 return;
             }
 
-            // Mostrar em ordem reversa (mais recentes primeiro)
-            const frasesOrdenadas = [...frases].reverse();
-
-            historyList.innerHTML = frasesOrdenadas.map((frase) => `
-                <div class="history-item">
-                    <div class="history-item-header">
-                        <span class="history-item-name">${frase.nome}</span>
-                        <span class="history-item-status ${frase.correto ? 'status-correct' : 'status-incorrect'}">
-                            ${frase.correto ? '✓ Correto' : '✗ Incorreto'}
-                        </span>
-                        <span class="history-item-points">${frase.pontos} pts</span>
+            playersList.innerHTML = Object.entries(players).map(([id, player]) => `
+                <div class="player-card">
+                    <div class="player-name">${player.nome}</div>
+                    <div class="player-status ${player.frase_enviada ? 'status-submitted' : 'status-waiting'}">
+                        ${player.frase_enviada ? '✓ Enviou' : '⏳ Aguardando'}
                     </div>
-                    <div style="color: #c9a961; font-size: 0.9em; margin-bottom: 8px;">
-                        <strong>Figura:</strong> ${frase.figura} | <strong>Palavra:</strong> ${frase.palavra || 'N/A'}
-                    </div>
-                    <div class="history-item-phrase">"${frase.frase}"</div>
-                    <div class="history-item-correction">
-                        <strong>Análise:</strong> ${frase.explicacao}
-                        ${frase.sugestao ? `<br><strong>Sugestão:</strong> ${frase.sugestao}` : ''}
-                    </div>
+                    <div class="player-points">${player.pontos} pts</div>
                 </div>
             `).join('');
         }
 
-        function carregarRanking() {
+        function updateRanking() {
             const rankingBody = document.getElementById('rankingBody');
-            const ranking = rankingPorSala[currentRoom] || {};
-            const jogadores = Object.entries(ranking).map(([nome, dados]) => ({
-                nome,
-                ...dados
-            })).sort((a, b) => b.pontos - a.pontos);
+            const playersRef = database.ref(`salas/${currentRoom}/jogadores`);
+            
+            playersRef.once('value', (snapshot) => {
+                const players = snapshot.val();
+                if (!players) {
+                    rankingBody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: #8b7355;">Carregando...</td></tr>';
+                    return;
+                }
 
-            if (jogadores.length === 0) {
-                rankingBody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: #8b7355;">Nenhum jogador ainda...</td></tr>';
+                const ranking = Object.values(players)
+                    .sort((a, b) => b.pontos - a.pontos);
+
+                rankingBody.innerHTML = ranking.map((player, index) => `
+                    <tr>
+                        <td>#${index + 1}</td>
+                        <td>${player.nome}</td>
+                        <td><strong>${player.pontos}</strong></td>
+                        <td>${player.frases_corretas}</td>
+                    </tr>
+                `).join('');
+            });
+        }
+
+        window.enviarFrase = function() {
+            if (!roundActive) {
+                document.getElementById('statusMessage').innerHTML = '<div class="status-message status-error">Tempo encerrado!</div>';
                 return;
             }
 
-            rankingBody.innerHTML = jogadores.map((jogador, index) => `
-                <tr>
-                    <td><span class="ranking-position">#${index + 1}</span></td>
-                    <td>${jogador.nome}</td>
-                    <td><strong>${jogador.pontos}</strong></td>
-                    <td>${jogador.frases_corretas}</td>
-                </tr>
-            `).join('');
+            const frase = document.getElementById('fraseUsuario').value.trim();
+            
+            if (!frase) {
+                document.getElementById('statusMessage').innerHTML = '<div class="status-message status-error">Por favor, escreva uma frase!</div>';
+                return;
+            }
+
+            if (!gameState || !gameState.categoria) {
+                document.getElementById('statusMessage').innerHTML = '<div class="status-message status-error">Categoria não carregada!</div>';
+                return;
+            }
+
+            // Analyze phrase
+            const resultado = analisarFrase(frase, gameState.categoria);
+            const pontos = resultado.correto ? 10 : 0;
+
+            // Update player in Firebase
+            const playerRef = database.ref(`salas/${currentRoom}/jogadores/${playerId}`);
+            playerRef.update({
+                frase_enviada: true,
+                pontos: firebase.database.ServerValue.increment(pontos),
+                frases_corretas: firebase.database.ServerValue.increment(resultado.correto ? 1 : 0),
+                ultima_frase: frase,
+                ultima_categoria: gameState.categoria,
+                ultima_analise: resultado.explicacao
+            });
+
+            document.getElementById('fraseUsuario').disabled = true;
+            document.getElementById('submitBtn').disabled = true;
+            document.getElementById('statusMessage').innerHTML = `<div class="status-message status-success">✓ Frase enviada! ${pontos > 0 ? `Você ganhou ${pontos} pontos!` : ''}</div>`;
+        };
+
+        function analisarFrase(frase, figura) {
+            const fraseMinuscula = frase.toLowerCase();
+            const palavrasFrase = frase.split(/\s+/).filter(p => p.length > 2);
+
+            if (frase.length < 10 || palavrasFrase.length < 5) {
+                return { correto: false, explicacao: "Frase muito curta" };
+            }
+
+            let correto = false;
+
+            switch(figura) {
+                case "Metáfora":
+                    correto = /\bé\b/.test(fraseMinuscula) && /\b(um|uma|o|a)\b/.test(fraseMinuscula);
+                    break;
+                case "Metonímia":
+                    correto = /\b(lê|bebe|assiste|ouve|come|bate|toca)\b/.test(fraseMinuscula);
+                    break;
+                case "Hipérbole":
+                    correto = /\b(milhões|infinito|eternidade|nunca|sempre)\b/.test(fraseMinuscula);
+                    break;
+                case "Ironia":
+                    correto = /\b(claro|óbvio|lógico|naturalmente)\b/.test(fraseMinuscula);
+                    break;
+                case "Personificação":
+                    correto = /\b(dança|canta|chora|sorri|respira)\b/.test(fraseMinuscula);
+                    break;
+                case "Comparação":
+                    correto = /\bcomo\b/.test(fraseMinuscula);
+                    break;
+                case "Antítese":
+                    correto = /\b(mas|porém|contudo)\b/.test(fraseMinuscula);
+                    break;
+                default:
+                    correto = palavrasFrase.length >= 5;
+            }
+
+            return {
+                correto: correto,
+                explicacao: correto ? `Ótimo! Você usou bem ${figura}.` : `Tente melhorar o uso de ${figura}.`
+            };
         }
     </script>
 </body>
