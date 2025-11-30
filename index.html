@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Batalha Estilística - Jogo de Figuras de Linguagem</title>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js"></script>
     <style>
         * {
             margin: 0;
@@ -486,6 +488,22 @@
     </footer>
 
     <script>
+        // Firebase Config
+        const firebaseConfig = {
+            apiKey: "AIzaSyB18wCa-yEhMYQkxY8ZlBoRIvBS1OAmjqg",
+            authDomain: "estilistica.firebaseapp.com",
+            databaseURL: "https://estilistica-default-rtdb.firebaseio.com",
+            projectId: "estilistica",
+            storageBucket: "estilistica.firebasestorage.app",
+            messagingSenderId: "622934874774",
+            appId: "1:622934874774:web:2ca073255bbf1b2d8f40b7",
+            measurementId: "G-KJVPBTNTRJ"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
         const figuras = [
             "Metáfora", "Metonímia", "Hipérbole", "Ironia", "Personificação",
             "Comparação", "Antítese", "Aliteração", "Onomatopeia", "Paradoxo",
@@ -507,15 +525,7 @@
         let gameState = { fase: 'prep', inicio: Date.now(), categoria: null, palavra: null };
         let gameTimer = null;
         let updateTimer = null;
-
-        // Sincronizar com outras abas
-        window.addEventListener('storage', (e) => {
-            if (currentRoom && e.key === `sala_${currentRoom}`) {
-                const roomData = JSON.parse(e.newValue) || { jogadores: {} };
-                gameState = roomData.estado;
-                updatePlayers(roomData.jogadores);
-            }
-        });
+        let roomRef = null;
 
         function iniciarJogo() {
             const inputName = document.getElementById('playerName').value.trim();
@@ -531,6 +541,7 @@
 
         function enterRoom(roomNumber) {
             currentRoom = roomNumber;
+            roomRef = db.ref(`salas/sala_${roomNumber}`);
             
             document.getElementById('roomsSection').classList.add('hidden');
             document.getElementById('gameArea').classList.add('active');
@@ -543,38 +554,31 @@
         }
 
         function initializeRoom() {
-            const roomKey = `sala_${currentRoom}`;
-            let roomData = JSON.parse(localStorage.getItem(roomKey)) || {
-                jogadores: {},
-                estado: { fase: 'prep', inicio: Date.now(), categoria: null, palavra: null }
-            };
-
-            roomData.jogadores[playerId] = {
+            roomRef.child('jogadores').child(playerId).set({
                 nome: playerName,
                 pontos: 0,
                 frases_corretas: 0,
                 enviou: false
-            };
+            });
 
-            localStorage.setItem(roomKey, JSON.stringify(roomData));
-            gameState = roomData.estado;
+            roomRef.child('estado').once('value', (snapshot) => {
+                if (snapshot.exists()) {
+                    gameState = snapshot.val();
+                } else {
+                    gameState = { fase: 'prep', inicio: Date.now(), categoria: null, palavra: null };
+                    roomRef.child('estado').set(gameState);
+                }
+            });
         }
 
         function backToRooms() {
             if (gameTimer) clearInterval(gameTimer);
             if (updateTimer) clearInterval(updateTimer);
             
-            const roomKey = `sala_${currentRoom}`;
-            let roomData = JSON.parse(localStorage.getItem(roomKey)) || { jogadores: {} };
-            delete roomData.jogadores[playerId];
-            
-            if (Object.keys(roomData.jogadores).length === 0) {
-                localStorage.removeItem(roomKey);
-            } else {
-                localStorage.setItem(roomKey, JSON.stringify(roomData));
-            }
+            roomRef.child('jogadores').child(playerId).remove();
 
             currentRoom = null;
+            roomRef = null;
             document.getElementById('roomsSection').classList.remove('hidden');
             document.getElementById('gameArea').classList.remove('active');
             document.getElementById('fraseUsuario').value = '';
@@ -584,71 +588,80 @@
 
         function startGameLoop() {
             gameTimer = setInterval(() => {
-                const roomKey = `sala_${currentRoom}`;
-                let roomData = JSON.parse(localStorage.getItem(roomKey)) || { jogadores: {}, estado: {} };
-                gameState = roomData.estado;
-
-                const now = Date.now();
-                const elapsed = now - gameState.inicio;
-
-                if (gameState.fase === 'prep') {
-                    if (elapsed < 10000) {
-                        const secs = Math.ceil((10000 - elapsed) / 1000);
-                        document.getElementById('timerLabel').textContent = 'Preparando...';
-                        document.getElementById('timerDisplay').textContent = secs;
-                        document.getElementById('fraseUsuario').disabled = true;
-                        document.getElementById('submitBtn').disabled = true;
-                        document.getElementById('sorteioSection').classList.remove('show');
-                    } else {
-                        const cat = figuras[Math.floor(Math.random() * figuras.length)];
-                        const pal = palavras[Math.floor(Math.random() * palavras.length)];
-                        gameState.fase = 'escrita';
-                        gameState.inicio = now;
-                        gameState.categoria = cat;
-                        gameState.palavra = pal;
-                        roomData.estado = gameState;
-                        localStorage.setItem(roomKey, JSON.stringify(roomData));
+                roomRef.child('estado').once('value', (snapshot) => {
+                    if (snapshot.exists()) {
+                        gameState = snapshot.val();
                     }
-                } else if (gameState.fase === 'escrita') {
-                    if (elapsed < 20000) {
-                        const secs = Math.ceil((20000 - elapsed) / 1000);
-                        document.getElementById('timerLabel').textContent = 'Tempo para escrever:';
-                        document.getElementById('timerDisplay').textContent = secs;
-                        document.getElementById('figuraSorteada').textContent = gameState.categoria || '-';
-                        document.getElementById('palavraSorteada').textContent = gameState.palavra || '-';
-                        document.getElementById('sorteioSection').classList.add('show');
-                        document.getElementById('fraseUsuario').disabled = false;
-                        document.getElementById('submitBtn').disabled = false;
-                    } else {
-                        document.getElementById('fraseUsuario').disabled = true;
-                        document.getElementById('submitBtn').disabled = true;
-                        document.getElementById('statusMessage').innerHTML = '<div class="status-message status-error">Tempo encerrado!</div>';
-                        
-                        setTimeout(() => {
-                            gameState.fase = 'prep';
-                            gameState.inicio = Date.now();
-                            gameState.categoria = null;
-                            gameState.palavra = null;
-                            roomData.estado = gameState;
-                            localStorage.setItem(roomKey, JSON.stringify(roomData));
-                            document.getElementById('statusMessage').innerHTML = '';
-                            document.getElementById('fraseUsuario').value = '';
+
+                    const now = Date.now();
+                    const elapsed = now - gameState.inicio;
+
+                    if (gameState.fase === 'prep') {
+                        if (elapsed < 10000) {
+                            const secs = Math.ceil((10000 - elapsed) / 1000);
+                            document.getElementById('timerLabel').textContent = 'Preparando...';
+                            document.getElementById('timerDisplay').textContent = secs;
+                            document.getElementById('fraseUsuario').disabled = true;
+                            document.getElementById('submitBtn').disabled = true;
+                            document.getElementById('sorteioSection').classList.remove('show');
+                        } else {
+                            const cat = figuras[Math.floor(Math.random() * figuras.length)];
+                            const pal = palavras[Math.floor(Math.random() * palavras.length)];
+                            gameState.fase = 'escrita';
+                            gameState.inicio = now;
+                            gameState.categoria = cat;
+                            gameState.palavra = pal;
+                            roomRef.child('estado').set(gameState);
+                        }
+                    } else if (gameState.fase === 'escrita') {
+                        if (elapsed < 20000) {
+                            const secs = Math.ceil((20000 - elapsed) / 1000);
+                            document.getElementById('timerLabel').textContent = 'Tempo para escrever:';
+                            document.getElementById('timerDisplay').textContent = secs;
+                            document.getElementById('figuraSorteada').textContent = gameState.categoria || '-';
+                            document.getElementById('palavraSorteada').textContent = gameState.palavra || '-';
+                            document.getElementById('sorteioSection').classList.add('show');
+                            document.getElementById('fraseUsuario').disabled = false;
+                            document.getElementById('submitBtn').disabled = false;
+                        } else {
+                            document.getElementById('fraseUsuario').disabled = true;
+                            document.getElementById('submitBtn').disabled = true;
+                            document.getElementById('statusMessage').innerHTML = '<div class="status-message status-error">Tempo encerrado!</div>';
                             
-                            Object.keys(roomData.jogadores).forEach(pid => {
-                                roomData.jogadores[pid].enviou = false;
-                            });
-                            localStorage.setItem(roomKey, JSON.stringify(roomData));
-                        }, 3000);
+                            setTimeout(() => {
+                                gameState.fase = 'prep';
+                                gameState.inicio = Date.now();
+                                gameState.categoria = null;
+                                gameState.palavra = null;
+                                roomRef.child('estado').set(gameState);
+                                document.getElementById('statusMessage').innerHTML = '';
+                                document.getElementById('fraseUsuario').value = '';
+                                
+                                roomRef.child('jogadores').once('value', (snap) => {
+                                    if (snap.exists()) {
+                                        snap.forEach((child) => {
+                                            roomRef.child('jogadores').child(child.key).update({ enviou: false });
+                                        });
+                                    }
+                                });
+                            }, 3000);
+                        }
                     }
-                }
+                });
             }, 500);
         }
 
         function startUpdateLoop() {
             updateTimer = setInterval(() => {
-                const roomKey = `sala_${currentRoom}`;
-                const roomData = JSON.parse(localStorage.getItem(roomKey)) || { jogadores: {} };
-                updatePlayers(roomData.jogadores);
+                roomRef.child('jogadores').once('value', (snapshot) => {
+                    if (snapshot.exists()) {
+                        const jogadores = {};
+                        snapshot.forEach((child) => {
+                            jogadores[child.key] = child.val();
+                        });
+                        updatePlayers(jogadores);
+                    }
+                });
             }, 1000);
         }
 
@@ -696,16 +709,11 @@
             const resultado = analisarFrase(frase, gameState.categoria);
             const pontos = resultado ? 10 : 0;
 
-            const roomKey = `sala_${currentRoom}`;
-            let roomData = JSON.parse(localStorage.getItem(roomKey)) || { jogadores: {} };
-            
-            if (roomData.jogadores[playerId]) {
-                roomData.jogadores[playerId].enviou = true;
-                roomData.jogadores[playerId].pontos += pontos;
-                if (resultado) roomData.jogadores[playerId].frases_corretas += 1;
-            }
-            
-            localStorage.setItem(roomKey, JSON.stringify(roomData));
+            roomRef.child('jogadores').child(playerId).update({
+                enviou: true,
+                pontos: firebase.database.ServerValue.increment(pontos),
+                frases_corretas: firebase.database.ServerValue.increment(resultado ? 1 : 0)
+            });
 
             document.getElementById('fraseUsuario').disabled = true;
             document.getElementById('submitBtn').disabled = true;
