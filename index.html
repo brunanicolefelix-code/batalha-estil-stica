@@ -486,7 +486,6 @@
     </footer>
 
     <script>
-        // Dados do jogo
         const figuras = [
             "Metáfora", "Metonímia", "Hipérbole", "Ironia", "Personificação",
             "Comparação", "Antítese", "Aliteração", "Onomatopeia", "Paradoxo",
@@ -509,6 +508,15 @@
         let gameTimer = null;
         let updateTimer = null;
 
+        // Sincronizar com outras abas
+        window.addEventListener('storage', (e) => {
+            if (currentRoom && e.key === `sala_${currentRoom}`) {
+                const roomData = JSON.parse(e.newValue) || { jogadores: {} };
+                gameState = roomData.estado;
+                updatePlayers(roomData.jogadores);
+            }
+        });
+
         function iniciarJogo() {
             const inputName = document.getElementById('playerName').value.trim();
             if (!inputName) return;
@@ -518,7 +526,7 @@
             
             document.getElementById('loginScreen').classList.add('hidden');
             document.getElementById('roomsSection').classList.remove('hidden');
-            document.getElementById('playerNameDisplay').textContent = `${playerName}`;
+            document.getElementById('playerNameDisplay').textContent = playerName;
         }
 
         function enterRoom(roomNumber) {
