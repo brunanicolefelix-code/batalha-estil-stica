@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jogo de Figuras de Linguagem - Multiplayer Medieval</title>
+    <title>Jogo de Figuras de Linguagem - Multiplayer</title>
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js"></script>
     <style>
@@ -18,8 +18,6 @@
             background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
             color: #e8d4b8;
             min-height: 100vh;
-            display: flex;
-            flex-direction: column;
         }
 
         header {
@@ -27,41 +25,27 @@
             border-bottom: 3px solid #8b7355;
             padding: 20px;
             text-align: center;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
         }
 
         header h1 {
-            font-size: 2.5em;
+            font-size: 2em;
             color: #d4af37;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
-            margin-bottom: 5px;
-        }
-
-        header p {
-            color: #c9a961;
-            font-size: 0.9em;
         }
 
         .container {
-            flex: 1;
-            max-width: 1400px;
-            margin: 30px auto;
-            width: 100%;
+            max-width: 1200px;
+            margin: 20px auto;
             padding: 0 20px;
         }
 
-        /* Login Screen */
         .login-screen {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 400px;
             background: linear-gradient(135deg, #3d2817 0%, #2d1810 100%);
             border: 3px solid #8b7355;
             border-radius: 10px;
             padding: 40px;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+            text-align: center;
+            max-width: 500px;
+            margin: 50px auto;
         }
 
         .login-screen.hidden {
@@ -70,59 +54,39 @@
 
         .login-screen h2 {
             color: #d4af37;
-            font-size: 2em;
             margin-bottom: 30px;
         }
 
         .login-form {
-            width: 100%;
-            max-width: 400px;
             display: flex;
             flex-direction: column;
-            gap: 20px;
-        }
-
-        .login-form label {
-            color: #c9a961;
-            font-weight: bold;
+            gap: 15px;
         }
 
         .login-form input {
             background: rgba(0, 0, 0, 0.5);
             border: 2px solid #8b7355;
             color: #e8d4b8;
-            padding: 15px;
+            padding: 12px;
             border-radius: 5px;
             font-family: 'Georgia', serif;
+            font-size: 1em;
         }
 
-        .login-form input:focus {
-            outline: none;
-            border-color: #d4af37;
-            box-shadow: 0 0 8px rgba(212, 175, 55, 0.3);
-        }
-
-        .login-button {
+        .login-form button {
             background: linear-gradient(135deg, #2d5016 0%, #1a3009 100%);
             color: #d4af37;
             border: 2px solid #d4af37;
-            padding: 15px;
+            padding: 12px;
             border-radius: 5px;
             cursor: pointer;
             font-weight: bold;
-            font-size: 1.1em;
-            transition: all 0.3s ease;
+            font-size: 1em;
         }
 
-        .login-button:hover {
-            background: linear-gradient(135deg, #3d6b1f 0%, #2d5016 100%);
-            transform: scale(1.02);
-        }
-
-        /* Rooms Selection */
         .rooms-section {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 20px;
             margin-bottom: 40px;
         }
@@ -137,20 +101,10 @@
             border-radius: 10px;
             padding: 20px;
             text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
-        }
-
-        .room-card:hover {
-            transform: translateY(-5px);
-            border-color: #d4af37;
-            box-shadow: 0 8px 16px rgba(212, 175, 55, 0.3);
         }
 
         .room-card h2 {
             color: #d4af37;
-            font-size: 1.8em;
             margin-bottom: 10px;
         }
 
@@ -158,27 +112,18 @@
             background: linear-gradient(135deg, #d4af37 0%, #aa8c2c 100%);
             color: #1a1a1a;
             border: none;
-            padding: 12px 30px;
-            font-size: 1em;
+            padding: 10px 20px;
             border-radius: 5px;
             cursor: pointer;
             font-weight: bold;
-            transition: all 0.3s ease;
         }
 
-        .room-card button:hover {
-            background: linear-gradient(135deg, #e8c547 0%, #c9a961 100%);
-            transform: scale(1.05);
-        }
-
-        /* Game Area */
         .game-area {
             display: none;
             background: linear-gradient(135deg, #3d2817 0%, #2d1810 100%);
             border: 3px solid #8b7355;
             border-radius: 10px;
-            padding: 30px;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+            padding: 20px;
         }
 
         .game-area.active {
@@ -189,96 +134,87 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
             flex-wrap: wrap;
-            gap: 20px;
+            gap: 10px;
         }
 
         .game-header h2 {
             color: #d4af37;
-            font-size: 2em;
-        }
-
-        .player-info {
-            color: #c9a961;
         }
 
         .back-button {
-            background: linear-gradient(135deg, #8b4513 0%, #654321 100%);
+            background: #8b4513;
             color: #e8d4b8;
             border: 2px solid #d4af37;
-            padding: 10px 20px;
+            padding: 8px 15px;
             border-radius: 5px;
             cursor: pointer;
-            font-weight: bold;
-            transition: all 0.3s ease;
         }
 
-        .back-button:hover {
-            background: linear-gradient(135deg, #a0522d 0%, #8b4513 100%);
-        }
-
-        /* Game Content */
-        .game-content {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
-            margin-bottom: 30px;
-        }
-
-        .game-column {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        /* Timer Section */
         .timer-section {
             background: rgba(0, 0, 0, 0.3);
             padding: 20px;
             border-radius: 8px;
             border: 2px solid #8b7355;
             text-align: center;
-            grid-column: 1 / -1;
+            margin-bottom: 20px;
         }
 
         .timer-display {
             font-size: 3em;
             color: #d4af37;
             font-weight: bold;
-            margin: 20px 0;
-            font-family: 'Arial', sans-serif;
+            margin: 10px 0;
         }
 
-        .timer-label {
-            color: #c9a961;
-            font-size: 1.2em;
-            margin-bottom: 10px;
-        }
-
-        /* Category Display */
-        .category-section {
+        .sorteio-section {
             background: rgba(0, 0, 0, 0.3);
             padding: 20px;
             border-radius: 8px;
             border: 2px solid #8b7355;
             text-align: center;
-            grid-column: 1 / -1;
+            margin-bottom: 20px;
+            display: none;
         }
 
-        .category-display {
-            font-size: 2.5em;
-            color: #d4af37;
-            font-weight: bold;
-            margin: 20px 0;
+        .sorteio-section.show {
+            display: block;
         }
 
-        .category-label {
+        .sorteio-display {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .sorteio-item {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 15px;
+            border-radius: 5px;
+            border: 2px solid #8b7355;
+        }
+
+        .sorteio-label {
             color: #c9a961;
-            font-size: 1.2em;
+            font-size: 0.9em;
+            margin-bottom: 5px;
         }
 
-        /* Input Section */
+        .sorteio-valor {
+            color: #d4af37;
+            font-size: 1.8em;
+            font-weight: bold;
+        }
+
+        .game-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
         .input-section {
             background: rgba(0, 0, 0, 0.3);
             padding: 20px;
@@ -288,57 +224,37 @@
 
         .input-section h3 {
             color: #d4af37;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
         }
 
-        .input-group {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        .input-group label {
-            color: #c9a961;
-            font-weight: bold;
-        }
-
-        .input-group textarea {
+        .input-section textarea {
+            width: 100%;
             background: rgba(0, 0, 0, 0.5);
             border: 2px solid #8b7355;
             color: #e8d4b8;
-            padding: 12px;
+            padding: 10px;
             border-radius: 5px;
-            font-family: 'Georgia', serif;
             min-height: 100px;
+            font-family: 'Georgia', serif;
             resize: vertical;
+            font-size: 1em;
         }
 
-        .input-group textarea:focus {
-            outline: none;
-            border-color: #d4af37;
-            box-shadow: 0 0 8px rgba(212, 175, 55, 0.3);
-        }
-
-        .input-group textarea:disabled {
+        .input-section textarea:disabled {
             opacity: 0.5;
-            cursor: not-allowed;
         }
 
         .submit-button {
             background: linear-gradient(135deg, #2d5016 0%, #1a3009 100%);
             color: #d4af37;
             border: 2px solid #d4af37;
-            padding: 15px;
+            padding: 10px 20px;
             border-radius: 5px;
             cursor: pointer;
             font-weight: bold;
-            font-size: 1.1em;
-            transition: all 0.3s ease;
-        }
-
-        .submit-button:hover:not(:disabled) {
-            background: linear-gradient(135deg, #3d6b1f 0%, #2d5016 100%);
-            transform: scale(1.02);
+            margin-top: 10px;
+            width: 100%;
+            font-size: 1em;
         }
 
         .submit-button:disabled {
@@ -346,30 +262,28 @@
             cursor: not-allowed;
         }
 
-        /* Players List */
         .players-section {
             background: rgba(0, 0, 0, 0.3);
             padding: 20px;
             border-radius: 8px;
             border: 2px solid #8b7355;
-            grid-column: 1 / -1;
         }
 
         .players-section h3 {
             color: #d4af37;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
         }
 
         .players-list {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
             gap: 10px;
         }
 
         .player-card {
             background: rgba(0, 0, 0, 0.5);
             border: 2px solid #8b7355;
-            padding: 15px;
+            padding: 10px;
             border-radius: 5px;
             text-align: center;
         }
@@ -377,29 +291,15 @@
         .player-name {
             color: #d4af37;
             font-weight: bold;
-            margin-bottom: 8px;
+            margin-bottom: 5px;
+            word-break: break-word;
         }
 
         .player-status {
             color: #c9a961;
-            font-size: 0.9em;
+            font-size: 0.85em;
         }
 
-        .status-waiting {
-            color: #ffa500;
-        }
-
-        .status-submitted {
-            color: #7cfc00;
-        }
-
-        .player-points {
-            color: #d4af37;
-            font-weight: bold;
-            margin-top: 8px;
-        }
-
-        /* Ranking */
         .ranking-section {
             background: rgba(0, 0, 0, 0.3);
             padding: 20px;
@@ -410,35 +310,30 @@
 
         .ranking-section h3 {
             color: #d4af37;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
         }
 
         .ranking-table {
             width: 100%;
             border-collapse: collapse;
+            font-size: 0.95em;
         }
 
         .ranking-table th {
             color: #d4af37;
-            padding: 12px;
+            padding: 10px;
             text-align: left;
             border-bottom: 2px solid #8b7355;
-            background: rgba(0, 0, 0, 0.5);
         }
 
         .ranking-table td {
             color: #e8d4b8;
-            padding: 12px;
+            padding: 10px;
             border-bottom: 1px solid #8b7355;
         }
 
-        .ranking-table tr:hover {
-            background: rgba(212, 175, 55, 0.1);
-        }
-
-        /* Status Message */
         .status-message {
-            padding: 15px;
+            padding: 10px;
             border-radius: 5px;
             margin-top: 10px;
             text-align: center;
@@ -455,38 +350,24 @@
             color: #ff6b6b;
         }
 
-        .status-info {
-            background: #3d2817;
-            color: #d4af37;
-        }
-
-        /* Footer */
         footer {
             background: linear-gradient(180deg, #2d1810 0%, #1a0f0a 100%);
             border-top: 3px solid #8b7355;
             padding: 20px;
             text-align: center;
-            margin-top: auto;
+            margin-top: 40px;
             color: #c9a961;
-            font-size: 0.9em;
         }
 
-        /* Responsive */
         @media (max-width: 768px) {
             .game-content {
                 grid-template-columns: 1fr;
             }
-
-            header h1 {
-                font-size: 1.8em;
+            .sorteio-display {
+                grid-template-columns: 1fr;
             }
-
             .timer-display {
                 font-size: 2em;
-            }
-
-            .category-display {
-                font-size: 1.8em;
             }
         }
     </style>
@@ -494,95 +375,80 @@
 <body>
     <header>
         <h1>⚔️ Jogo de Figuras de Linguagem - Multiplayer ⚔️</h1>
-        <p>Crie frases épicas com figuras de linguagem em tempo real</p>
     </header>
 
     <div class="container">
-        <!-- Login Screen -->
+        <!-- Login -->
         <div id="loginScreen" class="login-screen">
-            <h2>🏰 Bem-vindo ao Jogo Multiplayer! 🏰</h2>
+            <h2>🏰 Bem-vindo! 🏰</h2>
             <form class="login-form" onsubmit="iniciarJogo(event)">
-                <label for="playerName">Digite seu nome de jogador:</label>
-                <input 
-                    type="text" 
-                    id="playerName" 
-                    placeholder="Seu nome aqui..." 
-                    maxlength="50"
-                    required
-                    autofocus
-                >
-                <button type="submit" class="login-button">Entrar no Jogo</button>
+                <input type="text" id="playerName" placeholder="Seu nome..." required>
+                <button type="submit">Entrar</button>
             </form>
         </div>
 
-        <!-- Rooms Selection -->
+        <!-- Rooms -->
         <div id="roomsSection" class="rooms-section hidden">
-            <div class="player-info" style="grid-column: 1 / -1; text-align: center; margin-bottom: 20px;">
-                <span id="playerNameDisplay"></span>
-                <button class="back-button" onclick="mudarJogador()" style="margin-left: 20px;">Trocar Jogador</button>
+            <div style="grid-column: 1 / -1; text-align: center; margin-bottom: 20px;">
+                <span id="playerNameDisplay" style="color: #d4af37; font-weight: bold; font-size: 1.2em;"></span>
             </div>
             <div class="room-card">
                 <h2>🏰 Sala 1</h2>
-                <p>Castelo do Conhecimento</p>
                 <button onclick="enterRoom(1)">Entrar</button>
             </div>
             <div class="room-card">
                 <h2>🏯 Sala 2</h2>
-                <p>Torre da Sabedoria</p>
                 <button onclick="enterRoom(2)">Entrar</button>
             </div>
             <div class="room-card">
                 <h2>🗿 Sala 3</h2>
-                <p>Fortaleza da Criatividade</p>
                 <button onclick="enterRoom(3)">Entrar</button>
             </div>
         </div>
 
-        <!-- Game Area -->
+        <!-- Game -->
         <div id="gameArea" class="game-area">
             <div class="game-header">
                 <h2 id="roomTitle"></h2>
-                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                    <span class="player-info" id="gamePlayerInfo"></span>
-                    <button class="back-button" onclick="backToRooms()">← Voltar</button>
+                <div>
+                    <span id="gamePlayerInfo" style="margin-right: 15px; color: #d4af37;"></span>
+                    <button class="back-button" onclick="backToRooms()">Voltar</button>
                 </div>
             </div>
 
-            <!-- Timer Section -->
             <div class="timer-section">
-                <div class="timer-label" id="timerLabel">Preparando...</div>
+                <div id="timerLabel">Preparando...</div>
                 <div class="timer-display" id="timerDisplay">--</div>
             </div>
 
-            <!-- Category Section -->
-            <div class="category-section" id="categorySection" style="display: none;">
-                <div class="category-label">Figura de Linguagem:</div>
-                <div class="category-display" id="categoryDisplay">-</div>
+            <div class="sorteio-section" id="sorteioSection">
+                <div style="color: #d4af37; font-weight: bold; margin-bottom: 10px;">Sorteado para esta rodada:</div>
+                <div class="sorteio-display">
+                    <div class="sorteio-item">
+                        <div class="sorteio-label">📚 Figura de Linguagem</div>
+                        <div class="sorteio-valor" id="figuraSorteada">-</div>
+                    </div>
+                    <div class="sorteio-item">
+                        <div class="sorteio-label">📝 Palavra</div>
+                        <div class="sorteio-valor" id="palavraSorteada">-</div>
+                    </div>
+                </div>
             </div>
 
             <div class="game-content">
-                <!-- Input Section -->
                 <div class="input-section">
                     <h3>✍️ Sua Frase</h3>
-                    <div class="input-group">
-                        <textarea 
-                            id="fraseUsuario" 
-                            placeholder="Escreva sua frase aqui..."
-                            disabled
-                        ></textarea>
-                    </div>
-                    <button class="submit-button" id="submitBtn" onclick="enviarFrase()" disabled>Enviar Frase</button>
+                    <textarea id="fraseUsuario" placeholder="Escreva aqui..." disabled></textarea>
+                    <button class="submit-button" id="submitBtn" onclick="enviarFrase()" disabled>Enviar</button>
                     <div id="statusMessage"></div>
                 </div>
 
-                <!-- Players List -->
                 <div class="players-section">
                     <h3>👥 Jogadores na Sala</h3>
                     <div class="players-list" id="playersList"></div>
                 </div>
             </div>
 
-            <!-- Ranking -->
             <div class="ranking-section">
                 <h3>🏆 Ranking da Sala</h3>
                 <table class="ranking-table">
@@ -591,13 +457,11 @@
                             <th>Posição</th>
                             <th>Jogador</th>
                             <th>Pontos</th>
-                            <th>Frases Corretas</th>
+                            <th>Corretas</th>
                         </tr>
                     </thead>
                     <tbody id="rankingBody">
-                        <tr>
-                            <td colspan="4" style="text-align: center; color: #8b7355;">Carregando...</td>
-                        </tr>
+                        <tr><td colspan="4">Carregando...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -609,7 +473,7 @@
     </footer>
 
     <script>
-        // Firebase Configuration
+        // Firebase Config
         const firebaseConfig = {
             apiKey: "AIzaSyB18wCa-yEhMYQkxY8ZlBoRIvBS1OAmjqg",
             authDomain: "estilistica.firebaseapp.com",
@@ -617,61 +481,37 @@
             projectId: "estilistica",
             storageBucket: "estilistica.firebasestorage.app",
             messagingSenderId: "622934874774",
-            appId: "1:622934874774:web:2ca073255bbf1b2d8f40b7",
-            measurementId: "G-KJVPBTNTRJ"
+            appId: "1:622934874774:web:2ca073255bbf1b2d8f40b7"
         };
 
-        // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
-        const database = firebase.database();
+        const db = firebase.database();
 
-        // Figuras de Linguagem
-        const figurasLinguagem = [
-            "Metáfora", "Metonímia", "Sinédoque", "Antítese", "Paradoxo",
-            "Hipérbole", "Ironia", "Personificação", "Aliteração", "Assonância",
-            "Onomatopeia", "Comparação", "Catacrese", "Oxímoro", "Pleonasmo",
-            "Tautologia", "Zeugma", "Elipse", "Anacoluto", "Inversão"
-        ];
+        const figuras = ["Metáfora", "Metonímia", "Hipérbole", "Ironia", "Personificação", "Comparação", "Antítese", "Paradoxo", "Onomatopeia", "Aliteração", "Assonância", "Sinédoque", "Catacrese", "Oxímoro", "Pleonasmo"];
+        
+        const palavras = ["Tempestade", "Floresta", "Oceano", "Montanha", "Estrela", "Vento", "Chuva", "Fogo", "Gelo", "Nuvem", "Raio", "Trovão", "Areia", "Pedra", "Água", "Terra", "Ar", "Luz", "Sombra", "Silêncio", "Música", "Poesia", "Dança", "Coração", "Alma", "Mente", "Espírito", "Vida", "Morte", "Amor", "Ódio", "Medo", "Esperança", "Sonho", "Realidade"];
 
-        // Game State
         let playerName = null;
-        let currentRoom = null;
         let playerId = null;
+        let currentRoom = null;
         let gameState = null;
-        let roundActive = false;
-        let timerInterval = null;
-        let timeRemaining = 0;
+        let gameTimer = null;
+        let playersRef = null;
+        let gameStateRef = null;
 
-        // Initialize
-        window.iniciarJogo = function(event) {
+        function iniciarJogo(event) {
             event.preventDefault();
             playerName = document.getElementById('playerName').value.trim();
+            if (!playerName) return;
             
-            if (!playerName) {
-                alert('Por favor, digite seu nome!');
-                return;
-            }
-
-            playerId = 'player_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+            playerId = 'p_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
             
             document.getElementById('loginScreen').classList.add('hidden');
             document.getElementById('roomsSection').classList.remove('hidden');
-            document.getElementById('playerNameDisplay').textContent = `👤 Jogador: ${playerName}`;
-        };
+            document.getElementById('playerNameDisplay').textContent = `👤 ${playerName}`;
+        }
 
-        window.mudarJogador = function() {
-            if (currentRoom) {
-                backToRooms();
-            }
-            playerName = null;
-            playerId = null;
-            document.getElementById('loginScreen').classList.remove('hidden');
-            document.getElementById('roomsSection').classList.add('hidden');
-            document.getElementById('playerName').value = '';
-            document.getElementById('playerName').focus();
-        };
-
-        window.enterRoom = function(roomNumber) {
+        function enterRoom(roomNumber) {
             currentRoom = roomNumber;
             
             document.getElementById('roomsSection').classList.add('hidden');
@@ -679,120 +519,110 @@
             document.getElementById('roomTitle').textContent = `Sala ${roomNumber}`;
             document.getElementById('gamePlayerInfo').textContent = `👤 ${playerName}`;
 
-            // Register player in Firebase
-            const playerRef = database.ref(`salas/${currentRoom}/jogadores/${playerId}`);
-            playerRef.set({
+            // Setup Firebase references
+            playersRef = db.ref(`salas/${currentRoom}/jogadores/${playerId}`);
+            gameStateRef = db.ref(`salas/${currentRoom}/estado`);
+
+            // Register player
+            playersRef.set({
                 nome: playerName,
                 pontos: 0,
                 frases_corretas: 0,
-                frase_enviada: false,
+                enviou: false,
                 timestamp: firebase.database.ServerValue.TIMESTAMP
             });
 
-            // Listen to game state
-            const gameStateRef = database.ref(`salas/${currentRoom}/estado`);
-            gameStateRef.on('value', (snapshot) => {
-                gameState = snapshot.val();
-                if (gameState) {
-                    updateGameUI();
-                }
-            });
-
             // Listen to players
-            const playersRef = database.ref(`salas/${currentRoom}/jogadores`);
-            playersRef.on('value', (snapshot) => {
-                updatePlayersList(snapshot.val());
-                updateRanking();
+            db.ref(`salas/${currentRoom}/jogadores`).on('value', updatePlayers);
+
+            // Listen to game state
+            gameStateRef.on('value', (snap) => {
+                gameState = snap.val();
             });
 
             // Start game loop
             startGameLoop();
-        };
+        }
 
-        window.backToRooms = function() {
-            if (currentRoom) {
-                // Remove player from Firebase
-                database.ref(`salas/${currentRoom}/jogadores/${playerId}`).remove();
-                
-                // Stop listeners
-                database.ref(`salas/${currentRoom}/estado`).off();
-                database.ref(`salas/${currentRoom}/jogadores`).off();
-            }
+        function backToRooms() {
+            if (gameTimer) clearInterval(gameTimer);
+            
+            // Remove player
+            playersRef.remove();
+            
+            // Remove listeners
+            if (playersRef) db.ref(`salas/${currentRoom}/jogadores`).off();
+            if (gameStateRef) gameStateRef.off();
 
             currentRoom = null;
-            roundActive = false;
-            clearInterval(timerInterval);
-            
             document.getElementById('roomsSection').classList.remove('hidden');
             document.getElementById('gameArea').classList.remove('active');
             document.getElementById('fraseUsuario').value = '';
             document.getElementById('fraseUsuario').disabled = true;
             document.getElementById('submitBtn').disabled = true;
-            document.getElementById('statusMessage').innerHTML = '';
-            document.getElementById('categorySection').style.display = 'none';
-        };
+        }
 
         function startGameLoop() {
-            setInterval(() => {
+            gameTimer = setInterval(() => {
                 const now = Date.now();
-                const gameStateRef = database.ref(`salas/${currentRoom}/estado`);
                 
-                gameStateRef.once('value', (snapshot) => {
-                    let state = snapshot.val();
+                gameStateRef.once('value', (snap) => {
+                    let state = snap.val();
                     
                     if (!state) {
-                        // Initialize game state
                         state = {
-                            fase: 'preparacao',
-                            tempo_inicio: now,
+                            fase: 'prep',
+                            inicio: now,
                             categoria: null,
-                            rodada: 1
+                            palavra: null
                         };
                         gameStateRef.set(state);
                     }
 
-                    const tempoDecorrido = now - state.tempo_inicio;
-                    
-                    if (state.fase === 'preparacao') {
-                        if (tempoDecorrido < 10000) {
-                            // Preparation phase
-                            timeRemaining = Math.ceil((10000 - tempoDecorrido) / 1000);
-                            updateTimer('Preparando...', timeRemaining);
-                            roundActive = false;
+                    const elapsed = now - state.inicio;
+
+                    if (state.fase === 'prep') {
+                        if (elapsed < 10000) {
+                            const secs = Math.ceil((10000 - elapsed) / 1000);
+                            document.getElementById('timerLabel').textContent = 'Preparando...';
+                            document.getElementById('timerDisplay').textContent = secs;
+                            document.getElementById('fraseUsuario').disabled = true;
+                            document.getElementById('submitBtn').disabled = true;
+                            document.getElementById('sorteioSection').classList.remove('show');
                         } else {
-                            // Start writing phase
-                            const novaCategoria = figurasLinguagem[Math.floor(Math.random() * figurasLinguagem.length)];
+                            const cat = figuras[Math.floor(Math.random() * figuras.length)];
+                            const pal = palavras[Math.floor(Math.random() * palavras.length)];
                             gameStateRef.update({
                                 fase: 'escrita',
-                                tempo_inicio: now,
-                                categoria: novaCategoria
+                                inicio: now,
+                                categoria: cat,
+                                palavra: pal
                             });
                         }
                     } else if (state.fase === 'escrita') {
-                        if (tempoDecorrido < 20000) {
-                            // Writing phase
-                            timeRemaining = Math.ceil((20000 - tempoDecorrido) / 1000);
-                            updateTimer('Tempo para escrever:', timeRemaining);
-                            roundActive = true;
-                            document.getElementById('categorySection').style.display = 'block';
-                            document.getElementById('categoryDisplay').textContent = `🎭 ${state.categoria}`;
+                        if (elapsed < 20000) {
+                            const secs = Math.ceil((20000 - elapsed) / 1000);
+                            document.getElementById('timerLabel').textContent = 'Tempo para escrever:';
+                            document.getElementById('timerDisplay').textContent = secs;
+                            document.getElementById('figuraSorteada').textContent = state.categoria || '-';
+                            document.getElementById('palavraSorteada').textContent = state.palavra || '-';
+                            document.getElementById('sorteioSection').classList.add('show');
                             document.getElementById('fraseUsuario').disabled = false;
                             document.getElementById('submitBtn').disabled = false;
                         } else {
-                            // End round
-                            roundActive = false;
                             document.getElementById('fraseUsuario').disabled = true;
                             document.getElementById('submitBtn').disabled = true;
-                            document.getElementById('statusMessage').innerHTML = '<div class="status-message status-info">Tempo encerrado! Próxima rodada em breve...</div>';
+                            document.getElementById('statusMessage').innerHTML = '<div class="status-message status-error">Tempo encerrado!</div>';
                             
-                            // Reset for next round after 3 seconds
                             setTimeout(() => {
                                 gameStateRef.update({
-                                    fase: 'preparacao',
-                                    tempo_inicio: Date.now(),
+                                    fase: 'prep',
+                                    inicio: Date.now(),
                                     categoria: null,
-                                    rodada: (state.rodada || 1) + 1
+                                    palavra: null
                                 });
+                                document.getElementById('statusMessage').innerHTML = '';
+                                document.getElementById('fraseUsuario').value = '';
                             }, 3000);
                         }
                     }
@@ -800,73 +630,40 @@
             }, 500);
         }
 
-        function updateTimer(label, seconds) {
-            document.getElementById('timerLabel').textContent = label;
-            document.getElementById('timerDisplay').textContent = seconds;
-        }
-
-        function updateGameUI() {
-            if (!gameState) return;
-
-            if (gameState.categoria) {
-                document.getElementById('categorySection').style.display = 'block';
-                document.getElementById('categoryDisplay').textContent = `🎭 ${gameState.categoria}`;
-            }
-        }
-
-        function updatePlayersList(players) {
-            const playersList = document.getElementById('playersList');
-            if (!players) {
-                playersList.innerHTML = '<p style="color: #8b7355;">Nenhum jogador...</p>';
-                return;
-            }
-
-            playersList.innerHTML = Object.entries(players).map(([id, player]) => `
+        function updatePlayers(snap) {
+            const players = snap.val() || {};
+            const list = document.getElementById('playersList');
+            
+            list.innerHTML = Object.values(players).map(p => `
                 <div class="player-card">
-                    <div class="player-name">${player.nome}</div>
-                    <div class="player-status ${player.frase_enviada ? 'status-submitted' : 'status-waiting'}">
-                        ${player.frase_enviada ? '✓ Enviou' : '⏳ Aguardando'}
-                    </div>
-                    <div class="player-points">${player.pontos} pts</div>
+                    <div class="player-name">${p.nome}</div>
+                    <div class="player-status">${p.enviou ? '✓ Enviou' : '⏳ Aguardando'}</div>
+                    <div style="color: #d4af37; margin-top: 5px;">${p.pontos} pts</div>
                 </div>
+            `).join('');
+
+            updateRanking(players);
+        }
+
+        function updateRanking(players) {
+            const ranking = Object.values(players).sort((a, b) => b.pontos - a.pontos);
+            const tbody = document.getElementById('rankingBody');
+            
+            tbody.innerHTML = ranking.map((p, i) => `
+                <tr>
+                    <td>#${i + 1}</td>
+                    <td>${p.nome}</td>
+                    <td>${p.pontos}</td>
+                    <td>${p.frases_corretas}</td>
+                </tr>
             `).join('');
         }
 
-        function updateRanking() {
-            const rankingBody = document.getElementById('rankingBody');
-            const playersRef = database.ref(`salas/${currentRoom}/jogadores`);
-            
-            playersRef.once('value', (snapshot) => {
-                const players = snapshot.val();
-                if (!players) {
-                    rankingBody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: #8b7355;">Carregando...</td></tr>';
-                    return;
-                }
-
-                const ranking = Object.values(players)
-                    .sort((a, b) => b.pontos - a.pontos);
-
-                rankingBody.innerHTML = ranking.map((player, index) => `
-                    <tr>
-                        <td>#${index + 1}</td>
-                        <td>${player.nome}</td>
-                        <td><strong>${player.pontos}</strong></td>
-                        <td>${player.frases_corretas}</td>
-                    </tr>
-                `).join('');
-            });
-        }
-
-        window.enviarFrase = function() {
-            if (!roundActive) {
-                document.getElementById('statusMessage').innerHTML = '<div class="status-message status-error">Tempo encerrado!</div>';
-                return;
-            }
-
+        function enviarFrase() {
             const frase = document.getElementById('fraseUsuario').value.trim();
             
             if (!frase) {
-                document.getElementById('statusMessage').innerHTML = '<div class="status-message status-error">Por favor, escreva uma frase!</div>';
+                document.getElementById('statusMessage').innerHTML = '<div class="status-message status-error">Escreva uma frase!</div>';
                 return;
             }
 
@@ -875,66 +672,36 @@
                 return;
             }
 
-            // Analyze phrase
             const resultado = analisarFrase(frase, gameState.categoria);
-            const pontos = resultado.correto ? 10 : 0;
+            const pontos = resultado ? 10 : 0;
 
-            // Update player in Firebase
-            const playerRef = database.ref(`salas/${currentRoom}/jogadores/${playerId}`);
-            playerRef.update({
-                frase_enviada: true,
+            playersRef.update({
+                enviou: true,
                 pontos: firebase.database.ServerValue.increment(pontos),
-                frases_corretas: firebase.database.ServerValue.increment(resultado.correto ? 1 : 0),
-                ultima_frase: frase,
-                ultima_categoria: gameState.categoria,
-                ultima_analise: resultado.explicacao
+                frases_corretas: firebase.database.ServerValue.increment(resultado ? 1 : 0)
             });
 
             document.getElementById('fraseUsuario').disabled = true;
             document.getElementById('submitBtn').disabled = true;
-            document.getElementById('statusMessage').innerHTML = `<div class="status-message status-success">✓ Frase enviada! ${pontos > 0 ? `Você ganhou ${pontos} pontos!` : ''}</div>`;
-        };
+            document.getElementById('statusMessage').innerHTML = `<div class="status-message status-success">✓ Enviado! ${pontos} pts</div>`;
+        }
 
         function analisarFrase(frase, figura) {
-            const fraseMinuscula = frase.toLowerCase();
-            const palavrasFrase = frase.split(/\s+/).filter(p => p.length > 2);
+            const f = frase.toLowerCase();
+            const palavras = frase.split(/\s+/).filter(p => p.length > 2);
 
-            if (frase.length < 10 || palavrasFrase.length < 5) {
-                return { correto: false, explicacao: "Frase muito curta" };
-            }
-
-            let correto = false;
+            if (frase.length < 10 || palavras.length < 5) return false;
 
             switch(figura) {
-                case "Metáfora":
-                    correto = /\bé\b/.test(fraseMinuscula) && /\b(um|uma|o|a)\b/.test(fraseMinuscula);
-                    break;
-                case "Metonímia":
-                    correto = /\b(lê|bebe|assiste|ouve|come|bate|toca)\b/.test(fraseMinuscula);
-                    break;
-                case "Hipérbole":
-                    correto = /\b(milhões|infinito|eternidade|nunca|sempre)\b/.test(fraseMinuscula);
-                    break;
-                case "Ironia":
-                    correto = /\b(claro|óbvio|lógico|naturalmente)\b/.test(fraseMinuscula);
-                    break;
-                case "Personificação":
-                    correto = /\b(dança|canta|chora|sorri|respira)\b/.test(fraseMinuscula);
-                    break;
-                case "Comparação":
-                    correto = /\bcomo\b/.test(fraseMinuscula);
-                    break;
-                case "Antítese":
-                    correto = /\b(mas|porém|contudo)\b/.test(fraseMinuscula);
-                    break;
-                default:
-                    correto = palavrasFrase.length >= 5;
+                case "Metáfora": return /\bé\b/.test(f);
+                case "Metonímia": return /\b(lê|bebe|assiste|ouve|come)\b/.test(f);
+                case "Hipérbole": return /\b(milhões|infinito|eternidade|nunca|sempre)\b/.test(f);
+                case "Ironia": return /\b(claro|óbvio|lógico)\b/.test(f);
+                case "Personificação": return /\b(dança|canta|chora|sorri|respira)\b/.test(f);
+                case "Comparação": return /\bcomo\b/.test(f);
+                case "Antítese": return /\b(mas|porém|contudo)\b/.test(f);
+                default: return palavras.length >= 5;
             }
-
-            return {
-                correto: correto,
-                explicacao: correto ? `Ótimo! Você usou bem ${figura}.` : `Tente melhorar o uso de ${figura}.`
-            };
         }
     </script>
 </body>
