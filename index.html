@@ -3,9 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jogo de Figuras de Linguagem - Multiplayer</title>
-    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js"></script>
+    <title>Batalha Estilística - Jogo de Figuras de Linguagem</title>
     <style>
         * {
             margin: 0;
@@ -84,6 +82,10 @@
             font-size: 1em;
         }
 
+        .login-form button:hover {
+            background: linear-gradient(135deg, #3d6b1f 0%, #2a4812 100%);
+        }
+
         .rooms-section {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -116,6 +118,10 @@
             border-radius: 5px;
             cursor: pointer;
             font-weight: bold;
+        }
+
+        .room-card button:hover {
+            background: linear-gradient(135deg, #e8c547 0%, #c9a961 100%);
         }
 
         .game-area {
@@ -152,6 +158,10 @@
             cursor: pointer;
         }
 
+        .back-button:hover {
+            background: #a0522d;
+        }
+
         .timer-section {
             background: rgba(0, 0, 0, 0.3);
             padding: 20px;
@@ -161,11 +171,16 @@
             margin-bottom: 20px;
         }
 
+        .timer-label {
+            color: #c9a961;
+            font-size: 1.1em;
+            margin-bottom: 10px;
+        }
+
         .timer-display {
             font-size: 3em;
             color: #d4af37;
             font-weight: bold;
-            margin: 10px 0;
         }
 
         .sorteio-section {
@@ -293,6 +308,7 @@
             font-weight: bold;
             margin-bottom: 5px;
             word-break: break-word;
+            font-size: 0.9em;
         }
 
         .player-status {
@@ -374,55 +390,50 @@
 </head>
 <body>
     <header>
-        <h1>⚔️ Jogo de Figuras de Linguagem - Multiplayer ⚔️</h1>
+        <h1>⚔️ Batalha Estilística ⚔️</h1>
     </header>
 
     <div class="container">
-        <!-- Login -->
         <div id="loginScreen" class="login-screen">
             <h2>🏰 Bem-vindo! 🏰</h2>
-            <form class="login-form" onsubmit="iniciarJogo(event)">
-                <input type="text" id="playerName" placeholder="Seu nome..." required>
-                <button type="submit">Entrar</button>
-            </form>
+            <div class="login-form">
+                <input type="text" id="playerName" placeholder="Seu nome...">
+                <button onclick="iniciarJogo()">Entrar</button>
+            </div>
         </div>
 
-        <!-- Rooms -->
         <div id="roomsSection" class="rooms-section hidden">
-            <div style="grid-column: 1 / -1; text-align: center; margin-bottom: 20px;">
-                <span id="playerNameDisplay" style="color: #d4af37; font-weight: bold; font-size: 1.2em;"></span>
+            <div style="grid-column: 1/-1; text-align: center; margin-bottom: 20px;">
+                <h2 style="color: #d4af37;">👤 <span id="playerNameDisplay"></span></h2>
             </div>
             <div class="room-card">
                 <h2>🏰 Sala 1</h2>
                 <button onclick="enterRoom(1)">Entrar</button>
             </div>
             <div class="room-card">
-                <h2>🏯 Sala 2</h2>
+                <h2>🗼 Sala 2</h2>
                 <button onclick="enterRoom(2)">Entrar</button>
             </div>
             <div class="room-card">
-                <h2>🗿 Sala 3</h2>
+                <h2>🏯 Sala 3</h2>
                 <button onclick="enterRoom(3)">Entrar</button>
             </div>
         </div>
 
-        <!-- Game -->
         <div id="gameArea" class="game-area">
             <div class="game-header">
-                <h2 id="roomTitle"></h2>
-                <div>
-                    <span id="gamePlayerInfo" style="margin-right: 15px; color: #d4af37;"></span>
-                    <button class="back-button" onclick="backToRooms()">Voltar</button>
-                </div>
+                <h2 id="roomTitle">Sala 1</h2>
+                <span style="color: #d4af37;">👤 <span id="gamePlayerInfo"></span></span>
+                <button class="back-button" onclick="backToRooms()">Voltar</button>
             </div>
 
             <div class="timer-section">
-                <div id="timerLabel">Preparando...</div>
-                <div class="timer-display" id="timerDisplay">--</div>
+                <div class="timer-label" id="timerLabel">Preparando...</div>
+                <div class="timer-display" id="timerDisplay">10</div>
             </div>
 
             <div class="sorteio-section" id="sorteioSection">
-                <div style="color: #d4af37; font-weight: bold; margin-bottom: 10px;">Sorteado para esta rodada:</div>
+                <h3>📜 Sorteado para esta rodada:</h3>
                 <div class="sorteio-display">
                     <div class="sorteio-item">
                         <div class="sorteio-label">📚 Figura de Linguagem</div>
@@ -437,7 +448,7 @@
 
             <div class="game-content">
                 <div class="input-section">
-                    <h3>✍️ Sua Frase</h3>
+                    <h3>🖋️ Sua Frase:</h3>
                     <textarea id="fraseUsuario" placeholder="Escreva aqui..." disabled></textarea>
                     <button class="submit-button" id="submitBtn" onclick="enviarFrase()" disabled>Enviar</button>
                     <div id="statusMessage"></div>
@@ -457,11 +468,13 @@
                             <th>Posição</th>
                             <th>Jogador</th>
                             <th>Pontos</th>
-                            <th>Corretas</th>
+                            <th>Frases Corretas</th>
                         </tr>
                     </thead>
                     <tbody id="rankingBody">
-                        <tr><td colspan="4">Carregando...</td></tr>
+                        <tr>
+                            <td colspan="4" style="text-align: center;">Aguardando jogadores...</td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
@@ -469,46 +482,43 @@
     </div>
 
     <footer>
-        <p>Trabalho desenvolvido para a disciplina de Estilística do Texto - PUC Campinas</p>
+        Trabalho desenvolvido para a disciplina de Estilística do Texto - PUC Campinas
     </footer>
 
     <script>
-        // Firebase Config
-        const firebaseConfig = {
-            apiKey: "AIzaSyB18wCa-yEhMYQkxY8ZlBoRIvBS1OAmjqg",
-            authDomain: "estilistica.firebaseapp.com",
-            databaseURL: "https://estilistica-default-rtdb.firebaseio.com",
-            projectId: "estilistica",
-            storageBucket: "estilistica.firebasestorage.app",
-            messagingSenderId: "622934874774",
-            appId: "1:622934874774:web:2ca073255bbf1b2d8f40b7"
-        };
+        // Dados do jogo
+        const figuras = [
+            "Metáfora", "Metonímia", "Hipérbole", "Ironia", "Personificação",
+            "Comparação", "Antítese", "Aliteração", "Onomatopeia", "Paradoxo",
+            "Sinestesia", "Oximoro", "Eufemismo", "Litote", "Sinédoque"
+        ];
 
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.database();
+        const palavras = [
+            "Amor", "Morte", "Vida", "Luz", "Escuridão", "Tempestade", "Oceano",
+            "Montanha", "Floresta", "Rio", "Fogo", "Gelo", "Vento", "Chuva",
+            "Silêncio", "Grito", "Música", "Dança", "Sonho", "Realidade",
+            "Esperança", "Medo", "Coragem", "Fraqueza", "Beleza", "Fealdade",
+            "Verdade", "Mentira", "Justiça", "Injustiça", "Paz", "Guerra",
+            "Liberdade", "Prisão", "Riqueza", "Pobreza"
+        ];
 
-        const figuras = ["Metáfora", "Metonímia", "Hipérbole", "Ironia", "Personificação", "Comparação", "Antítese", "Paradoxo", "Onomatopeia", "Aliteração", "Assonância", "Sinédoque", "Catacrese", "Oxímoro", "Pleonasmo"];
-        
-        const palavras = ["Tempestade", "Floresta", "Oceano", "Montanha", "Estrela", "Vento", "Chuva", "Fogo", "Gelo", "Nuvem", "Raio", "Trovão", "Areia", "Pedra", "Água", "Terra", "Ar", "Luz", "Sombra", "Silêncio", "Música", "Poesia", "Dança", "Coração", "Alma", "Mente", "Espírito", "Vida", "Morte", "Amor", "Ódio", "Medo", "Esperança", "Sonho", "Realidade"];
-
-        let playerName = null;
-        let playerId = null;
+        let playerName = '';
+        let playerId = '';
         let currentRoom = null;
-        let gameState = null;
+        let gameState = { fase: 'prep', inicio: Date.now(), categoria: null, palavra: null };
         let gameTimer = null;
-        let playersRef = null;
-        let gameStateRef = null;
+        let updateTimer = null;
 
-        function iniciarJogo(event) {
-            event.preventDefault();
-            playerName = document.getElementById('playerName').value.trim();
-            if (!playerName) return;
+        function iniciarJogo() {
+            const inputName = document.getElementById('playerName').value.trim();
+            if (!inputName) return;
             
+            playerName = inputName;
             playerId = 'p_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
             
             document.getElementById('loginScreen').classList.add('hidden');
             document.getElementById('roomsSection').classList.remove('hidden');
-            document.getElementById('playerNameDisplay').textContent = `👤 ${playerName}`;
+            document.getElementById('playerNameDisplay').textContent = `${playerName}`;
         }
 
         function enterRoom(roomNumber) {
@@ -517,42 +527,44 @@
             document.getElementById('roomsSection').classList.add('hidden');
             document.getElementById('gameArea').classList.add('active');
             document.getElementById('roomTitle').textContent = `Sala ${roomNumber}`;
-            document.getElementById('gamePlayerInfo').textContent = `👤 ${playerName}`;
+            document.getElementById('gamePlayerInfo').textContent = playerName;
 
-            // Setup Firebase references
-            playersRef = db.ref(`salas/${currentRoom}/jogadores/${playerId}`);
-            gameStateRef = db.ref(`salas/${currentRoom}/estado`);
+            initializeRoom();
+            startGameLoop();
+            startUpdateLoop();
+        }
 
-            // Register player
-            playersRef.set({
+        function initializeRoom() {
+            const roomKey = `sala_${currentRoom}`;
+            let roomData = JSON.parse(localStorage.getItem(roomKey)) || {
+                jogadores: {},
+                estado: { fase: 'prep', inicio: Date.now(), categoria: null, palavra: null }
+            };
+
+            roomData.jogadores[playerId] = {
                 nome: playerName,
                 pontos: 0,
                 frases_corretas: 0,
-                enviou: false,
-                timestamp: firebase.database.ServerValue.TIMESTAMP
-            });
+                enviou: false
+            };
 
-            // Listen to players
-            db.ref(`salas/${currentRoom}/jogadores`).on('value', updatePlayers);
-
-            // Listen to game state
-            gameStateRef.on('value', (snap) => {
-                gameState = snap.val();
-            });
-
-            // Start game loop
-            startGameLoop();
+            localStorage.setItem(roomKey, JSON.stringify(roomData));
+            gameState = roomData.estado;
         }
 
         function backToRooms() {
             if (gameTimer) clearInterval(gameTimer);
+            if (updateTimer) clearInterval(updateTimer);
             
-            // Remove player
-            playersRef.remove();
+            const roomKey = `sala_${currentRoom}`;
+            let roomData = JSON.parse(localStorage.getItem(roomKey)) || { jogadores: {} };
+            delete roomData.jogadores[playerId];
             
-            // Remove listeners
-            if (playersRef) db.ref(`salas/${currentRoom}/jogadores`).off();
-            if (gameStateRef) gameStateRef.off();
+            if (Object.keys(roomData.jogadores).length === 0) {
+                localStorage.removeItem(roomKey);
+            } else {
+                localStorage.setItem(roomKey, JSON.stringify(roomData));
+            }
 
             currentRoom = null;
             document.getElementById('roomsSection').classList.remove('hidden');
@@ -564,77 +576,78 @@
 
         function startGameLoop() {
             gameTimer = setInterval(() => {
+                const roomKey = `sala_${currentRoom}`;
+                let roomData = JSON.parse(localStorage.getItem(roomKey)) || { jogadores: {}, estado: {} };
+                gameState = roomData.estado;
+
                 const now = Date.now();
-                
-                gameStateRef.once('value', (snap) => {
-                    let state = snap.val();
-                    
-                    if (!state) {
-                        state = {
-                            fase: 'prep',
-                            inicio: now,
-                            categoria: null,
-                            palavra: null
-                        };
-                        gameStateRef.set(state);
+                const elapsed = now - gameState.inicio;
+
+                if (gameState.fase === 'prep') {
+                    if (elapsed < 10000) {
+                        const secs = Math.ceil((10000 - elapsed) / 1000);
+                        document.getElementById('timerLabel').textContent = 'Preparando...';
+                        document.getElementById('timerDisplay').textContent = secs;
+                        document.getElementById('fraseUsuario').disabled = true;
+                        document.getElementById('submitBtn').disabled = true;
+                        document.getElementById('sorteioSection').classList.remove('show');
+                    } else {
+                        const cat = figuras[Math.floor(Math.random() * figuras.length)];
+                        const pal = palavras[Math.floor(Math.random() * palavras.length)];
+                        gameState.fase = 'escrita';
+                        gameState.inicio = now;
+                        gameState.categoria = cat;
+                        gameState.palavra = pal;
+                        roomData.estado = gameState;
+                        localStorage.setItem(roomKey, JSON.stringify(roomData));
                     }
-
-                    const elapsed = now - state.inicio;
-
-                    if (state.fase === 'prep') {
-                        if (elapsed < 10000) {
-                            const secs = Math.ceil((10000 - elapsed) / 1000);
-                            document.getElementById('timerLabel').textContent = 'Preparando...';
-                            document.getElementById('timerDisplay').textContent = secs;
-                            document.getElementById('fraseUsuario').disabled = true;
-                            document.getElementById('submitBtn').disabled = true;
-                            document.getElementById('sorteioSection').classList.remove('show');
-                        } else {
-                            const cat = figuras[Math.floor(Math.random() * figuras.length)];
-                            const pal = palavras[Math.floor(Math.random() * palavras.length)];
-                            gameStateRef.update({
-                                fase: 'escrita',
-                                inicio: now,
-                                categoria: cat,
-                                palavra: pal
-                            });
-                        }
-                    } else if (state.fase === 'escrita') {
-                        if (elapsed < 20000) {
-                            const secs = Math.ceil((20000 - elapsed) / 1000);
-                            document.getElementById('timerLabel').textContent = 'Tempo para escrever:';
-                            document.getElementById('timerDisplay').textContent = secs;
-                            document.getElementById('figuraSorteada').textContent = state.categoria || '-';
-                            document.getElementById('palavraSorteada').textContent = state.palavra || '-';
-                            document.getElementById('sorteioSection').classList.add('show');
-                            document.getElementById('fraseUsuario').disabled = false;
-                            document.getElementById('submitBtn').disabled = false;
-                        } else {
-                            document.getElementById('fraseUsuario').disabled = true;
-                            document.getElementById('submitBtn').disabled = true;
-                            document.getElementById('statusMessage').innerHTML = '<div class="status-message status-error">Tempo encerrado!</div>';
+                } else if (gameState.fase === 'escrita') {
+                    if (elapsed < 20000) {
+                        const secs = Math.ceil((20000 - elapsed) / 1000);
+                        document.getElementById('timerLabel').textContent = 'Tempo para escrever:';
+                        document.getElementById('timerDisplay').textContent = secs;
+                        document.getElementById('figuraSorteada').textContent = gameState.categoria || '-';
+                        document.getElementById('palavraSorteada').textContent = gameState.palavra || '-';
+                        document.getElementById('sorteioSection').classList.add('show');
+                        document.getElementById('fraseUsuario').disabled = false;
+                        document.getElementById('submitBtn').disabled = false;
+                    } else {
+                        document.getElementById('fraseUsuario').disabled = true;
+                        document.getElementById('submitBtn').disabled = true;
+                        document.getElementById('statusMessage').innerHTML = '<div class="status-message status-error">Tempo encerrado!</div>';
+                        
+                        setTimeout(() => {
+                            gameState.fase = 'prep';
+                            gameState.inicio = Date.now();
+                            gameState.categoria = null;
+                            gameState.palavra = null;
+                            roomData.estado = gameState;
+                            localStorage.setItem(roomKey, JSON.stringify(roomData));
+                            document.getElementById('statusMessage').innerHTML = '';
+                            document.getElementById('fraseUsuario').value = '';
                             
-                            setTimeout(() => {
-                                gameStateRef.update({
-                                    fase: 'prep',
-                                    inicio: Date.now(),
-                                    categoria: null,
-                                    palavra: null
-                                });
-                                document.getElementById('statusMessage').innerHTML = '';
-                                document.getElementById('fraseUsuario').value = '';
-                            }, 3000);
-                        }
+                            Object.keys(roomData.jogadores).forEach(pid => {
+                                roomData.jogadores[pid].enviou = false;
+                            });
+                            localStorage.setItem(roomKey, JSON.stringify(roomData));
+                        }, 3000);
                     }
-                });
+                }
             }, 500);
         }
 
-        function updatePlayers(snap) {
-            const players = snap.val() || {};
+        function startUpdateLoop() {
+            updateTimer = setInterval(() => {
+                const roomKey = `sala_${currentRoom}`;
+                const roomData = JSON.parse(localStorage.getItem(roomKey)) || { jogadores: {} };
+                updatePlayers(roomData.jogadores);
+            }, 1000);
+        }
+
+        function updatePlayers(jogadores) {
             const list = document.getElementById('playersList');
             
-            list.innerHTML = Object.values(players).map(p => `
+            list.innerHTML = Object.values(jogadores).map(p => `
                 <div class="player-card">
                     <div class="player-name">${p.nome}</div>
                     <div class="player-status">${p.enviou ? '✓ Enviou' : '⏳ Aguardando'}</div>
@@ -642,11 +655,11 @@
                 </div>
             `).join('');
 
-            updateRanking(players);
+            updateRanking(jogadores);
         }
 
-        function updateRanking(players) {
-            const ranking = Object.values(players).sort((a, b) => b.pontos - a.pontos);
+        function updateRanking(jogadores) {
+            const ranking = Object.values(jogadores).sort((a, b) => b.pontos - a.pontos);
             const tbody = document.getElementById('rankingBody');
             
             tbody.innerHTML = ranking.map((p, i) => `
@@ -675,11 +688,16 @@
             const resultado = analisarFrase(frase, gameState.categoria);
             const pontos = resultado ? 10 : 0;
 
-            playersRef.update({
-                enviou: true,
-                pontos: firebase.database.ServerValue.increment(pontos),
-                frases_corretas: firebase.database.ServerValue.increment(resultado ? 1 : 0)
-            });
+            const roomKey = `sala_${currentRoom}`;
+            let roomData = JSON.parse(localStorage.getItem(roomKey)) || { jogadores: {} };
+            
+            if (roomData.jogadores[playerId]) {
+                roomData.jogadores[playerId].enviou = true;
+                roomData.jogadores[playerId].pontos += pontos;
+                if (resultado) roomData.jogadores[playerId].frases_corretas += 1;
+            }
+            
+            localStorage.setItem(roomKey, JSON.stringify(roomData));
 
             document.getElementById('fraseUsuario').disabled = true;
             document.getElementById('submitBtn').disabled = true;
@@ -688,9 +706,9 @@
 
         function analisarFrase(frase, figura) {
             const f = frase.toLowerCase();
-            const palavras = frase.split(/\s+/).filter(p => p.length > 2);
+            const palavrasArray = frase.split(/\s+/).filter(p => p.length > 2);
 
-            if (frase.length < 10 || palavras.length < 5) return false;
+            if (frase.length < 10 || palavrasArray.length < 5) return false;
 
             switch(figura) {
                 case "Metáfora": return /\bé\b/.test(f);
@@ -700,7 +718,7 @@
                 case "Personificação": return /\b(dança|canta|chora|sorri|respira)\b/.test(f);
                 case "Comparação": return /\bcomo\b/.test(f);
                 case "Antítese": return /\b(mas|porém|contudo)\b/.test(f);
-                default: return palavras.length >= 5;
+                default: return palavrasArray.length >= 5;
             }
         }
     </script>
