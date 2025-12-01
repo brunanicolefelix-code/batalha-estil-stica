@@ -357,7 +357,7 @@
             <h2>🏰 Bem-vindo! 🏰</h2>
             <div class="login-form">
                 <input type="text" id="playerNameInput" placeholder="Seu nome...">
-                <button onclick="window.gameApp.iniciarJogo()">Entrar</button>
+                <button onclick="gameApp.iniciarJogo()">Entrar</button>
             </div>
         </div>
 
@@ -367,15 +367,15 @@
             </div>
             <div class="room-card">
                 <h2>🏰 Sala 1</h2>
-                <button onclick="window.gameApp.enterRoom(1)">Entrar</button>
+                <button onclick="gameApp.enterRoom(1)">Entrar</button>
             </div>
             <div class="room-card">
                 <h2>🗼 Sala 2</h2>
-                <button onclick="window.gameApp.enterRoom(2)">Entrar</button>
+                <button onclick="gameApp.enterRoom(2)">Entrar</button>
             </div>
             <div class="room-card">
                 <h2>🏯 Sala 3</h2>
-                <button onclick="window.gameApp.enterRoom(3)">Entrar</button>
+                <button onclick="gameApp.enterRoom(3)">Entrar</button>
             </div>
         </div>
 
@@ -383,7 +383,7 @@
             <div class="game-header">
                 <h2 id="roomTitle">Sala 1</h2>
                 <span style="color: #d4af37;">👤 <span id="gamePlayerInfo"></span></span>
-                <button class="back-button" onclick="window.gameApp.backToRooms()">Voltar</button>
+                <button class="back-button" onclick="gameApp.backToRooms()">Voltar</button>
             </div>
 
             <div class="timer-section">
@@ -409,7 +409,7 @@
                 <div class="input-section">
                     <h3>🖋️ Sua Frase:</h3>
                     <textarea id="fraseUsuario" placeholder="Escreva aqui..." disabled></textarea>
-                    <button class="submit-button" id="submitBtn" onclick="window.gameApp.enviarFrase()" disabled>Enviar</button>
+                    <button class="submit-button" id="submitBtn" onclick="gameApp.enviarFrase()" disabled>Enviar</button>
                     <div id="statusMessage"></div>
                 </div>
 
@@ -443,7 +443,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js"></script>
     <script>
-        window.gameApp = {
+        const gameApp = {
             figuras: ["Metáfora", "Metonímia", "Hipérbole", "Ironia", "Personificação", "Comparação", "Antítese", "Aliteração", "Onomatopeia", "Paradoxo", "Sinestesia", "Oximoro", "Eufemismo", "Litote", "Sinédoque"],
             palavras: ["Amor", "Morte", "Vida", "Luz", "Escuridão", "Tempestade", "Oceano", "Montanha", "Floresta", "Rio", "Fogo", "Gelo", "Vento", "Chuva", "Silêncio", "Grito", "Música", "Dança", "Sonho", "Realidade", "Esperança", "Medo", "Coragem", "Fraqueza", "Beleza", "Fealdade", "Verdade", "Mentira", "Justiça", "Injustiça", "Paz", "Guerra", "Liberdade", "Prisão", "Riqueza", "Pobreza"],
             
@@ -457,6 +457,7 @@
             palavra: null,
             pontos: 0,
             db: null,
+            firebaseReady: false,
             
             iniciarFirebase: function() {
                 try {
@@ -475,8 +476,11 @@
                         firebase.initializeApp(firebaseConfig);
                     }
                     this.db = firebase.database();
+                    this.firebaseReady = true;
+                    console.log('Firebase inicializado com sucesso');
                 } catch(e) {
-                    console.log('Firebase não disponível, usando modo local');
+                    console.log('Erro ao inicializar Firebase:', e);
+                    this.firebaseReady = false;
                 }
             },
             
@@ -500,27 +504,24 @@
                 document.getElementById('roomTitle').textContent = `Sala ${roomNumber}`;
                 document.getElementById('gamePlayerInfo').textContent = this.playerName;
                 
-                // Registrar no Firebase se disponível
-                if (this.db) {
-                    try {
-                        const playerRef = this.db.ref(`salas/sala${roomNumber}/jogadores/${this.playerId}`);
-                        playerRef.set({
-                            nome: this.playerName,
-                            pontos: 0,
-                            timestamp: firebase.database.ServerValue.TIMESTAMP
-                        });
-                        
-                        const salaRef = this.db.ref(`salas/sala${roomNumber}`);
-                        salaRef.on('value', (snapshot) => {
-                            const data = snapshot.val();
-                            if (data && data.jogadores) {
-                                this.atualizarJogadores(data.jogadores);
-                                this.atualizarRanking(data.jogadores);
-                            }
-                        });
-                    } catch(e) {
-                        console.log('Erro ao conectar Firebase');
-                    }
+                // Registrar no Firebase
+                if (this.firebaseReady && this.db) {
+                    const playerRef = this.db.ref(`salas/sala${roomNumber}/jogadores/${this.playerId}`);
+                    playerRef.set({
+                        nome: this.playerName,
+                        pontos: 0,
+                        timestamp: Date.now()
+                    }).catch(err => console.log('Erro ao registrar jogador:', err));
+                    
+                    // Ouvir mudanças na sala
+                    const salaRef = this.db.ref(`salas/sala${roomNumber}`);
+                    salaRef.on('value', (snapshot) => {
+                        const data = snapshot.val();
+                        if (data && data.jogadores) {
+                            this.atualizarJogadores(data.jogadores);
+                            this.atualizarRanking(data.jogadores);
+                        }
+                    }, (err) => console.log('Erro ao ouvir sala:', err));
                 }
                 
                 this.startGameLoop();
@@ -529,11 +530,9 @@
             backToRooms: function() {
                 if (this.gameTimer) clearInterval(this.gameTimer);
                 
-                if (this.db && this.currentRoom) {
-                    try {
-                        const playerRef = this.db.ref(`salas/sala${this.currentRoom}/jogadores/${this.playerId}`);
-                        playerRef.remove();
-                    } catch(e) {}
+                if (this.firebaseReady && this.db && this.currentRoom) {
+                    const playerRef = this.db.ref(`salas/sala${this.currentRoom}/jogadores/${this.playerId}`);
+                    playerRef.remove().catch(err => console.log('Erro ao remover jogador:', err));
                 }
                 
                 this.currentRoom = null;
@@ -562,17 +561,6 @@
                         this.timeLeft = 20;
                         this.categoria = this.figuras[Math.floor(Math.random() * this.figuras.length)];
                         this.palavra = this.palavras[Math.floor(Math.random() * this.palavras.length)];
-                        
-                        if (this.db && this.currentRoom) {
-                            try {
-                                const salaRef = this.db.ref(`salas/sala${this.currentRoom}`);
-                                salaRef.update({
-                                    categoria: this.categoria,
-                                    palavra: this.palavra,
-                                    phase: 'escrita'
-                                });
-                            } catch(e) {}
-                        }
                         
                         document.getElementById('timerLabel').textContent = 'Tempo para escrever:';
                         document.getElementById('figuraSorteada').textContent = this.categoria;
@@ -610,23 +598,21 @@
                 const pts = analise.correto ? 10 : 0;
                 this.pontos += pts;
 
-                if (this.db && this.currentRoom) {
-                    try {
-                        const playerRef = this.db.ref(`salas/sala${this.currentRoom}/jogadores/${this.playerId}`);
-                        playerRef.update({ pontos: this.pontos });
+                if (this.firebaseReady && this.db && this.currentRoom) {
+                    const playerRef = this.db.ref(`salas/sala${this.currentRoom}/jogadores/${this.playerId}`);
+                    playerRef.update({ pontos: this.pontos }).catch(err => console.log('Erro ao atualizar pontos:', err));
 
-                        const historicoRef = this.db.ref(`salas/sala${this.currentRoom}/historico`).push();
-                        historicoRef.set({
-                            jogador: this.playerName,
-                            frase: frase,
-                            figura: this.categoria,
-                            palavra: this.palavra,
-                            correto: analise.correto,
-                            pontos: pts,
-                            analise: analise.motivo,
-                            timestamp: firebase.database.ServerValue.TIMESTAMP
-                        });
-                    } catch(e) {}
+                    const historicoRef = this.db.ref(`salas/sala${this.currentRoom}/historico`).push();
+                    historicoRef.set({
+                        jogador: this.playerName,
+                        frase: frase,
+                        figura: this.categoria,
+                        palavra: this.palavra,
+                        correto: analise.correto,
+                        pontos: pts,
+                        analise: analise.motivo,
+                        timestamp: Date.now()
+                    }).catch(err => console.log('Erro ao salvar histórico:', err));
                 }
 
                 document.getElementById('fraseUsuario').disabled = true;
@@ -668,18 +654,15 @@
                 const f = frase.toLowerCase();
                 const palavrasArray = frase.split(/\s+/).filter(p => p.length > 2);
 
-                // Validação básica
                 if (frase.length < 10 || palavrasArray.length < 4) {
                     return { correto: false, motivo: 'Frase muito curta' };
                 }
 
                 let pontuacao = 0;
-                let motivos = [];
 
                 switch(figura) {
                     case "Metáfora":
                         if (/\bé\b/.test(f)) pontuacao += 50;
-                        if (/\b(como|semelhante|parece)\b/.test(f)) motivos.push('Detectada comparação');
                         if (palavrasArray.length >= 6) pontuacao += 30;
                         if (/\b(beleza|luz|escuridão|fogo|gelo|tempestade|oceano)\b/.test(f)) pontuacao += 20;
                         break;
@@ -714,8 +697,7 @@
                         break;
                         
                     case "Antítese":
-                        if (/\b(mas|porém|contudo|todavia|entretanto|porém)\b/.test(f)) pontuacao += 60;
-                        if (/(\w+).*\b(não|nem)\b.*\1/.test(f)) pontuacao += 30;
+                        if (/\b(mas|porém|contudo|todavia|entretanto)\b/.test(f)) pontuacao += 60;
                         if (palavrasArray.length >= 6) pontuacao += 10;
                         break;
                         
@@ -739,7 +721,6 @@
                         
                     case "Sinestesia":
                         if (/\b(cor|som|gosto|cheiro|toque|quente|frio|doce|amargo|áspero|suave)\b/.test(f)) pontuacao += 50;
-                        if (/(\b(vermelho|azul|verde|amarelo|preto|branco)\b.*(som|grito|música|voz))|(som|grito|música|voz).*(vermelho|azul|verde|amarelo|preto|branco)/.test(f)) pontuacao += 50;
                         break;
                         
                     case "Oximoro":
@@ -749,7 +730,6 @@
                         
                     case "Eufemismo":
                         if (/\b(partir|descansar|dormir|ir|deixar|faltar)\b/.test(f)) pontuacao += 50;
-                        if (/\b(morte|morrer|morto)\b/.test(f) && /\b(partir|descansar|dormir)\b/.test(f)) pontuacao += 30;
                         break;
                         
                     case "Litote":
@@ -766,7 +746,6 @@
                         pontuacao = palavrasArray.length >= 5 ? 40 : 0;
                 }
 
-                // Bônus por tamanho
                 if (palavrasArray.length >= 8) pontuacao += 10;
                 if (palavrasArray.length >= 10) pontuacao += 10;
 
@@ -777,16 +756,14 @@
         
         // Inicializar Firebase quando a página carregar
         window.addEventListener('load', function() {
-            window.gameApp.iniciarFirebase();
+            gameApp.iniciarFirebase();
         });
         
         // Limpar ao sair
         window.addEventListener('beforeunload', function() {
-            if (window.gameApp.currentRoom && window.gameApp.db) {
-                try {
-                    const playerRef = window.gameApp.db.ref(`salas/sala${window.gameApp.currentRoom}/jogadores/${window.gameApp.playerId}`);
-                    playerRef.remove();
-                } catch(e) {}
+            if (gameApp.currentRoom && gameApp.firebaseReady && gameApp.db) {
+                const playerRef = gameApp.db.ref(`salas/sala${gameApp.currentRoom}/jogadores/${gameApp.playerId}`);
+                playerRef.remove().catch(err => console.log('Erro ao remover jogador:', err));
             }
         });
     </script>
