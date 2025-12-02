@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Batalha Estilística</title>
+    <title>Batalha Estilística - Teste de Conhecimento</title>
     <style>
         * {
             margin: 0;
@@ -13,118 +13,136 @@
 
         body {
             font-family: 'Georgia', serif;
-            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
-            color: #e8d4b8;
-            min-height: 100vh;
-        }
-
-        header {
-            background: linear-gradient(180deg, #3d2817 0%, #2d1810 100%);
-            border-bottom: 3px solid #8b7355;
-            padding: 20px;
-            text-align: center;
-        }
-
-        header h1 {
-            font-size: 2em;
+            background: linear-gradient(135deg, #2c2416 0%, #1a1410 100%);
             color: #d4af37;
+            min-height: 100vh;
+            padding: 20px;
         }
 
         .container {
-            max-width: 1200px;
-            margin: 20px auto;
-            padding: 0 20px;
+            max-width: 900px;
+            margin: 0 auto;
         }
 
-        .login-screen {
-            background: linear-gradient(135deg, #3d2817 0%, #2d1810 100%);
-            border: 3px solid #8b7355;
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            border-top: 3px solid #d4af37;
+            border-bottom: 3px solid #d4af37;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            letter-spacing: 2px;
+        }
+
+        .screen {
+            display: none;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        .login-box {
+            background: rgba(139, 69, 19, 0.8);
+            border: 3px solid #d4af37;
             border-radius: 10px;
             padding: 40px;
-            text-align: center;
             max-width: 500px;
             margin: 50px auto;
+            text-align: center;
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
         }
 
-        .hidden {
-            display: none !important;
-        }
-
-        .login-screen h2 {
-            color: #d4af37;
+        .login-box h2 {
             margin-bottom: 30px;
+            font-size: 1.8em;
         }
 
-        .login-form {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        .login-form input {
-            background: rgba(0, 0, 0, 0.5);
-            border: 2px solid #8b7355;
-            color: #e8d4b8;
+        input[type="text"], textarea {
+            width: 100%;
             padding: 12px;
-            border-radius: 5px;
+            margin: 10px 0;
+            background: rgba(0,0,0,0.5);
+            border: 2px solid #d4af37;
+            color: #d4af37;
             font-family: 'Georgia', serif;
+            border-radius: 5px;
             font-size: 1em;
         }
 
-        .login-form button {
-            background: linear-gradient(135deg, #2d5016 0%, #1a3009 100%);
-            color: #d4af37;
-            border: 2px solid #d4af37;
-            padding: 12px;
+        input[type="text"]::placeholder, textarea::placeholder {
+            color: #a0826d;
+        }
+
+        button {
+            background: linear-gradient(135deg, #d4af37 0%, #b8960f 100%);
+            color: #1a1410;
+            border: none;
+            padding: 12px 30px;
+            font-size: 1em;
+            font-weight: bold;
             border-radius: 5px;
             cursor: pointer;
-            font-weight: bold;
-            font-size: 1em;
+            margin-top: 15px;
+            transition: all 0.3s ease;
+            font-family: 'Georgia', serif;
         }
 
-        .login-form button:hover {
-            background: linear-gradient(135deg, #3d6b1f 0%, #2a4812 100%);
+        button:hover {
+            background: linear-gradient(135deg, #e6c200 0%, #d4af37 100%);
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.5);
         }
 
-        .rooms-section {
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .rooms-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 20px;
-            margin-bottom: 40px;
+            margin: 30px 0;
         }
 
         .room-card {
-            background: linear-gradient(135deg, #3d2817 0%, #2d1810 100%);
-            border: 3px solid #8b7355;
+            background: rgba(139, 69, 19, 0.8);
+            border: 3px solid #d4af37;
             border-radius: 10px;
-            padding: 20px;
+            padding: 30px;
             text-align: center;
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+            transition: all 0.3s ease;
         }
 
-        .room-card h2 {
-            color: #d4af37;
+        .room-card:hover {
+            background: rgba(139, 69, 19, 1);
+            box-shadow: 0 0 30px rgba(212, 175, 55, 0.5);
+            transform: translateY(-5px);
+        }
+
+        .room-card h3 {
+            font-size: 1.5em;
             margin-bottom: 10px;
         }
 
-        .room-card button {
-            background: linear-gradient(135deg, #d4af37 0%, #aa8c2c 100%);
-            color: #1a1a1a;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: bold;
+        .room-card p {
+            font-size: 0.9em;
+            color: #a0826d;
+            margin-bottom: 15px;
         }
 
-        .room-card button:hover {
-            background: linear-gradient(135deg, #e8c547 0%, #c9a961 100%);
-        }
-
-        .game-area {
-            background: linear-gradient(135deg, #3d2817 0%, #2d1810 100%);
-            border: 3px solid #8b7355;
+        .game-screen {
+            background: rgba(139, 69, 19, 0.8);
+            border: 3px solid #d4af37;
             border-radius: 10px;
-            padding: 20px;
+            padding: 30px;
+            margin: 20px 0;
         }
 
         .game-header {
@@ -132,306 +150,215 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 20px;
-            flex-wrap: wrap;
-            gap: 10px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #d4af37;
         }
 
         .game-header h2 {
-            color: #d4af37;
+            font-size: 1.5em;
         }
 
-        .back-button {
-            background: #8b4513;
-            color: #e8d4b8;
-            border: 2px solid #d4af37;
-            padding: 8px 15px;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        .back-button:hover {
-            background: #a0522d;
-        }
-
-        .timer-section {
-            background: rgba(0, 0, 0, 0.3);
-            padding: 20px;
-            border-radius: 8px;
-            border: 2px solid #8b7355;
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .timer-label {
-            color: #c9a961;
-            font-size: 1.1em;
-            margin-bottom: 10px;
-        }
-
-        .timer-display {
-            font-size: 3em;
-            color: #d4af37;
+        .player-name {
+            color: #ff9999;
             font-weight: bold;
         }
 
-        .sorteio-section {
-            background: rgba(0, 0, 0, 0.3);
+        .sorteio-info {
+            background: rgba(0,0,0,0.3);
             padding: 20px;
-            border-radius: 8px;
-            border: 2px solid #8b7355;
-            text-align: center;
-            margin-bottom: 20px;
-            display: none;
-        }
-
-        .sorteio-display {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-top: 15px;
-        }
-
-        .sorteio-item {
-            background: rgba(0, 0, 0, 0.5);
-            padding: 15px;
             border-radius: 5px;
-            border: 2px solid #8b7355;
+            margin: 20px 0;
+            border-left: 4px solid #d4af37;
+            text-align: center;
         }
 
-        .sorteio-label {
-            color: #c9a961;
+        .sorteio-info h3 {
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+
+        .sorteio-info .item {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #ffd700;
+            margin: 10px 0;
+        }
+
+        .sorteio-info .label {
             font-size: 0.9em;
-            margin-bottom: 5px;
-        }
-
-        .sorteio-valor {
-            color: #d4af37;
-            font-size: 1.8em;
-            font-weight: bold;
+            color: #a0826d;
         }
 
         .game-content {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            margin-bottom: 20px;
+            margin: 30px 0;
         }
 
-        .input-section {
-            background: rgba(0, 0, 0, 0.3);
+        .game-section {
+            background: rgba(0,0,0,0.3);
             padding: 20px;
-            border-radius: 8px;
-            border: 2px solid #8b7355;
-        }
-
-        .input-section h3 {
-            color: #d4af37;
-            margin-bottom: 10px;
-        }
-
-        .input-section textarea {
-            width: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            border: 2px solid #8b7355;
-            color: #e8d4b8;
-            padding: 10px;
             border-radius: 5px;
-            min-height: 100px;
-            font-family: 'Georgia', serif;
+            border: 2px dashed #d4af37;
+            margin: 20px 0;
+        }
+
+        .game-section h3 {
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+
+        textarea {
             resize: vertical;
-            font-size: 1em;
-        }
-
-        .submit-button {
-            background: linear-gradient(135deg, #2d5016 0%, #1a3009 100%);
-            color: #d4af37;
-            border: 2px solid #d4af37;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: bold;
-            margin-top: 10px;
+            min-height: 120px;
             width: 100%;
-            font-size: 1em;
         }
 
-        .submit-button:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        .players-section {
-            background: rgba(0, 0, 0, 0.3);
+        .feedback {
             padding: 20px;
-            border-radius: 8px;
-            border: 2px solid #8b7355;
-        }
-
-        .players-section h3 {
-            color: #d4af37;
-            margin-bottom: 10px;
-        }
-
-        .player-card {
-            background: rgba(0, 0, 0, 0.5);
-            border: 2px solid #8b7355;
-            padding: 10px;
+            margin: 20px 0;
             border-radius: 5px;
-            text-align: center;
-            color: #d4af37;
-            font-weight: bold;
-            margin-bottom: 5px;
+            border-left: 4px solid;
+            font-size: 1.1em;
         }
 
-        .ranking-section {
-            background: rgba(0, 0, 0, 0.3);
-            padding: 20px;
-            border-radius: 8px;
-            border: 2px solid #8b7355;
-            grid-column: 1 / -1;
+        .feedback.correto {
+            background: rgba(76, 175, 80, 0.2);
+            border-left-color: #4caf50;
+            color: #81c784;
         }
 
-        .ranking-section h3 {
-            color: #d4af37;
-            margin-bottom: 10px;
+        .feedback.incorreto {
+            background: rgba(244, 67, 54, 0.2);
+            border-left-color: #f44336;
+            color: #ef5350;
         }
 
-        .ranking-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.95em;
+        .feedback strong {
+            font-size: 1.2em;
         }
 
-        .ranking-table th {
-            color: #d4af37;
-            padding: 10px;
-            text-align: left;
-            border-bottom: 2px solid #8b7355;
-        }
-
-        .ranking-table td {
-            color: #e8d4b8;
-            padding: 10px;
-            border-bottom: 1px solid #8b7355;
-        }
-
-        .status-message {
-            padding: 10px;
-            border-radius: 5px;
+        .feedback-message {
             margin-top: 10px;
-            text-align: center;
-            font-weight: bold;
-            background: #2d5016;
-            color: #7cfc00;
+            line-height: 1.6;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .button-group button {
+            flex: 1;
         }
 
         footer {
-            background: linear-gradient(180deg, #2d1810 0%, #1a0f0a 100%);
-            border-top: 3px solid #8b7355;
-            padding: 20px;
             text-align: center;
-            margin-top: 40px;
-            color: #c9a961;
+            padding: 20px;
+            margin-top: 30px;
+            border-top: 2px solid #d4af37;
+            font-size: 0.9em;
+            color: #a0826d;
+        }
+
+        .timer {
+            font-size: 1.2em;
+            color: #ff6b6b;
+            font-weight: bold;
         }
 
         @media (max-width: 768px) {
-            .game-content {
-                grid-template-columns: 1fr;
+            h1 {
+                font-size: 1.8em;
             }
-            .sorteio-display {
-                grid-template-columns: 1fr;
+            
+            .game-header {
+                flex-direction: column;
+                gap: 10px;
             }
-            .timer-display {
-                font-size: 2em;
+
+            .button-group {
+                flex-direction: column;
             }
         }
     </style>
 </head>
 <body>
-    <header>
-        <h1>⚔️ Batalha Estilística ⚔️</h1>
-    </header>
-
     <div class="container">
-        <div id="loginScreen" class="login-screen">
-            <h2>🏰 Bem-vindo! 🏰</h2>
-            <div class="login-form">
-                <input type="text" id="playerNameInput" placeholder="Seu nome...">
-                <button onclick="gameApp.iniciarJogo()">Entrar</button>
+        <header>
+            <h1>⚔️ Batalha Estilística ⚔️</h1>
+            <p>Teste seus conhecimentos em Figuras de Linguagem</p>
+        </header>
+
+        <!-- TELA DE LOGIN -->
+        <div class="screen active" id="loginScreen">
+            <div class="login-box">
+                <h2>👑 Bem-vindo! 👑</h2>
+                <p style="margin-bottom: 20px; color: #a0826d;">Digite seu nome para começar</p>
+                <input type="text" id="playerNameInput" placeholder="Seu nome..." maxlength="30">
+                <button onclick="startGame()">Entrar</button>
             </div>
         </div>
 
-        <div id="roomsSection" class="rooms-section hidden">
-            <div style="grid-column: 1/-1; text-align: center; margin-bottom: 20px;">
-                <h2 style="color: #d4af37;">👤 <span id="playerNameDisplay"></span></h2>
-            </div>
-            <div class="room-card">
-                <h2>🏰 Sala 1</h2>
-                <button onclick="gameApp.enterRoom(1)">Entrar</button>
-            </div>
-            <div class="room-card">
-                <h2>🗼 Sala 2</h2>
-                <button onclick="gameApp.enterRoom(2)">Entrar</button>
-            </div>
-            <div class="room-card">
-                <h2>🏯 Sala 3</h2>
-                <button onclick="gameApp.enterRoom(3)">Entrar</button>
+        <!-- TELA DE SALAS -->
+        <div class="screen" id="roomsScreen">
+            <h2 style="text-align: center; margin: 30px 0; font-size: 1.8em;">Escolha um Tema:</h2>
+            <div class="rooms-grid">
+                <div class="room-card">
+                    <h3>🏺 Objetos</h3>
+                    <p>Teste com palavras relacionadas a objetos do dia a dia</p>
+                    <button onclick="enterRoom('tema1')">Entrar</button>
+                </div>
+                <div class="room-card">
+                    <h3>🍎 Alimentos & Elementos</h3>
+                    <p>Teste com palavras de alimentos e elementos naturais</p>
+                    <button onclick="enterRoom('tema2')">Entrar</button>
+                </div>
+                <div class="room-card">
+                    <h3>🌸 Natureza & Sentimentos</h3>
+                    <p>Teste com palavras de natureza e emoções</p>
+                    <button onclick="enterRoom('tema3')">Entrar</button>
+                </div>
             </div>
         </div>
 
-        <div id="gameArea" class="game-area hidden">
-            <div class="game-header">
-                <h2 id="roomTitle">Sala 1</h2>
-                <span style="color: #d4af37;">👤 <span id="gamePlayerInfo"></span></span>
-                <button class="back-button" onclick="gameApp.backToRooms()">Voltar</button>
-            </div>
+        <!-- TELA DE JOGO -->
+        <div class="screen" id="gameScreen">
+            <div class="game-screen">
+                <div class="game-header">
+                    <h2 id="roomTitle">Tema 1</h2>
+                    <span class="player-name" id="playerDisplay">Jogador</span>
+                    <button onclick="goBackToRooms()">Voltar</button>
+                </div>
 
-            <div class="timer-section">
-                <div class="timer-label" id="timerLabel">Preparando...</div>
-                <div class="timer-display" id="timerDisplay">10</div>
-            </div>
-
-            <div class="sorteio-section" id="sorteioSection">
-                <h3>📜 Sorteado para esta rodada:</h3>
-                <div class="sorteio-display">
-                    <div class="sorteio-item">
-                        <div class="sorteio-label">📚 Figura de Linguagem</div>
-                        <div class="sorteio-valor" id="figuraSorteada">-</div>
+                <div class="sorteio-info">
+                    <h3>📚 Sua Tarefa:</h3>
+                    <div style="margin: 15px 0;">
+                        <div class="label">Figura de Linguagem:</div>
+                        <div class="item" id="figuraDisplay">-</div>
                     </div>
-                    <div class="sorteio-item">
-                        <div class="sorteio-label">📝 Palavra</div>
-                        <div class="sorteio-valor" id="palavraSorteada">-</div>
+                    <div style="margin: 15px 0;">
+                        <div class="label">Palavra para usar:</div>
+                        <div class="item" id="palavraDisplay">-</div>
                     </div>
                 </div>
-            </div>
 
-            <div class="game-content">
-                <div class="input-section">
-                    <h3>🖋️ Sua Frase:</h3>
-                    <textarea id="fraseUsuario" placeholder="Escreva aqui..." disabled></textarea>
-                    <button class="submit-button" id="submitBtn" onclick="gameApp.enviarFrase()" disabled>Enviar</button>
-                    <div id="statusMessage"></div>
+                <div class="game-content">
+                    <div class="game-section">
+                        <h3>✍️ Escreva sua frase:</h3>
+                        <p style="color: #a0826d; margin-bottom: 10px; font-size: 0.9em;">
+                            Crie uma frase usando a figura de linguagem e a palavra sorteada
+                        </p>
+                        <textarea id="fraseUsuario" placeholder="Escreva sua frase aqui..."></textarea>
+                        <button id="submitBtn" onclick="submitFrase()" style="width: 100%; margin-top: 15px;">Enviar</button>
+                    </div>
+
+                    <div id="feedback"></div>
+
+                    <div class="button-group">
+                        <button onclick="novaRodada()">Nova Rodada</button>
+                        <button onclick="goBackToRooms()">Voltar aos Temas</button>
+                    </div>
                 </div>
-
-                <div class="players-section">
-                    <h3>👥 Jogadores na Sala</h3>
-                    <div id="playersList"></div>
-                </div>
-            </div>
-
-            <div class="ranking-section">
-                <h3>🏆 Ranking da Sala</h3>
-                <table class="ranking-table">
-                    <thead>
-                        <tr>
-                            <th>Posição</th>
-                            <th>Jogador</th>
-                            <th>Pontos</th>
-                        </tr>
-                    </thead>
-                    <tbody id="rankingBody">
-                    </tbody>
-                </table>
             </div>
         </div>
     </div>
@@ -440,332 +367,168 @@
         Trabalho desenvolvido para a disciplina de Estilística do Texto - PUC Campinas
     </footer>
 
-    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js"></script>
     <script>
-        const gameApp = {
-            figuras: ["Metáfora", "Metonímia", "Hipérbole", "Ironia", "Personificação", "Comparação", "Antítese", "Aliteração", "Onomatopeia", "Paradoxo", "Sinestesia", "Oximoro", "Eufemismo", "Litote", "Sinédoque"],
-            palavras: ["Amor", "Morte", "Vida", "Luz", "Escuridão", "Tempestade", "Oceano", "Montanha", "Floresta", "Rio", "Fogo", "Gelo", "Vento", "Chuva", "Silêncio", "Grito", "Música", "Dança", "Sonho", "Realidade", "Esperança", "Medo", "Coragem", "Fraqueza", "Beleza", "Fealdade", "Verdade", "Mentira", "Justiça", "Injustiça", "Paz", "Guerra", "Liberdade", "Prisão", "Riqueza", "Pobreza"],
-            
+        // Estado do jogo
+        let gameState = {
             playerName: '',
             currentRoom: null,
-            playerId: Math.random().toString(36).substr(2, 9),
-            gameTimer: null,
-            timeLeft: 10,
-            gamePhase: 'prep',
-            categoria: null,
-            palavra: null,
-            pontos: 0,
-            db: null,
-            firebaseReady: false,
-            
-            iniciarFirebase: function() {
-                try {
-                    const firebaseConfig = {
-                        apiKey: "AIzaSyB18wCa-yEhMYQkxY8ZlBoRIvBS1OAmjqg",
-                        authDomain: "estilistica.firebaseapp.com",
-                        databaseURL: "https://estilistica-default-rtdb.firebaseio.com",
-                        projectId: "estilistica",
-                        storageBucket: "estilistica.firebasestorage.app",
-                        messagingSenderId: "622934874774",
-                        appId: "1:622934874774:web:2ca073255bbf1b2d8f40b7",
-                        measurementId: "G-KJVPBTNTRJ"
-                    };
-                    
-                    if (!firebase.apps.length) {
-                        firebase.initializeApp(firebaseConfig);
-                    }
-                    this.db = firebase.database();
-                    this.firebaseReady = true;
-                    console.log('Firebase inicializado com sucesso');
-                } catch(e) {
-                    console.log('Erro ao inicializar Firebase:', e);
-                    this.firebaseReady = false;
-                }
+            figura: '',
+            palavra: '',
+            tema: ''
+        };
+
+        // Temas com palavras específicas
+        const temas = {
+            tema1: {
+                nome: '🏺 Objetos',
+                palavras: ['Livro', 'Espada', 'Coroa', 'Porta', 'Janela', 'Mesa', 'Cadeira', 'Relógio', 'Espelho', 'Chave', 'Caixa', 'Vela', 'Moeda', 'Anel', 'Lâmpada']
             },
-            
-            iniciarJogo: function() {
-                const inputName = document.getElementById('playerNameInput').value.trim();
-                if (!inputName) {
-                    alert('Digite seu nome!');
-                    return;
-                }
-                
-                this.playerName = inputName;
-                document.getElementById('loginScreen').classList.add('hidden');
-                document.getElementById('roomsSection').classList.remove('hidden');
-                document.getElementById('playerNameDisplay').textContent = this.playerName;
+            tema2: {
+                nome: '🍎 Alimentos & Elementos',
+                palavras: ['Pão', 'Água', 'Fogo', 'Vento', 'Terra', 'Mel', 'Maçã', 'Leite', 'Sal', 'Trigo', 'Carvão', 'Chuva', 'Neve', 'Gelo', 'Areia']
             },
-            
-            enterRoom: function(roomNumber) {
-                this.currentRoom = roomNumber;
-                document.getElementById('roomsSection').classList.add('hidden');
-                document.getElementById('gameArea').classList.remove('hidden');
-                document.getElementById('roomTitle').textContent = `Sala ${roomNumber}`;
-                document.getElementById('gamePlayerInfo').textContent = this.playerName;
-                
-                // Registrar no Firebase
-                if (this.firebaseReady && this.db) {
-                    const playerRef = this.db.ref(`salas/sala${roomNumber}/jogadores/${this.playerId}`);
-                    playerRef.set({
-                        nome: this.playerName,
-                        pontos: 0,
-                        timestamp: Date.now()
-                    }).catch(err => console.log('Erro ao registrar jogador:', err));
-                    
-                    // Ouvir mudanças na sala
-                    const salaRef = this.db.ref(`salas/sala${roomNumber}`);
-                    salaRef.on('value', (snapshot) => {
-                        const data = snapshot.val();
-                        if (data && data.jogadores) {
-                            this.atualizarJogadores(data.jogadores);
-                            this.atualizarRanking(data.jogadores);
-                        }
-                    }, (err) => console.log('Erro ao ouvir sala:', err));
-                }
-                
-                this.startGameLoop();
-            },
-            
-            backToRooms: function() {
-                if (this.gameTimer) clearInterval(this.gameTimer);
-                
-                if (this.firebaseReady && this.db && this.currentRoom) {
-                    const playerRef = this.db.ref(`salas/sala${this.currentRoom}/jogadores/${this.playerId}`);
-                    playerRef.remove().catch(err => console.log('Erro ao remover jogador:', err));
-                }
-                
-                this.currentRoom = null;
-                this.gamePhase = 'prep';
-                this.timeLeft = 10;
-                this.pontos = 0;
-                
-                document.getElementById('roomsSection').classList.remove('hidden');
-                document.getElementById('gameArea').classList.add('hidden');
-                document.getElementById('fraseUsuario').value = '';
-                document.getElementById('fraseUsuario').disabled = true;
-                document.getElementById('submitBtn').disabled = true;
-                document.getElementById('statusMessage').innerHTML = '';
-            },
-            
-            startGameLoop: function() {
-                this.timeLeft = 10;
-                this.gamePhase = 'prep';
-                
-                this.gameTimer = setInterval(() => {
-                    this.timeLeft--;
-                    document.getElementById('timerDisplay').textContent = Math.max(0, this.timeLeft);
-
-                    if (this.gamePhase === 'prep' && this.timeLeft <= 0) {
-                        this.gamePhase = 'escrita';
-                        this.timeLeft = 20;
-                        this.categoria = this.figuras[Math.floor(Math.random() * this.figuras.length)];
-                        this.palavra = this.palavras[Math.floor(Math.random() * this.palavras.length)];
-                        
-                        document.getElementById('timerLabel').textContent = 'Tempo para escrever:';
-                        document.getElementById('figuraSorteada').textContent = this.categoria;
-                        document.getElementById('palavraSorteada').textContent = this.palavra;
-                        document.getElementById('sorteioSection').style.display = 'block';
-                        document.getElementById('fraseUsuario').disabled = false;
-                        document.getElementById('submitBtn').disabled = false;
-                    } 
-                    else if (this.gamePhase === 'escrita' && this.timeLeft <= 0) {
-                        document.getElementById('fraseUsuario').disabled = true;
-                        document.getElementById('submitBtn').disabled = true;
-                        document.getElementById('statusMessage').innerHTML = '<div class="status-message">⏰ Tempo encerrado!</div>';
-                        
-                        setTimeout(() => {
-                            document.getElementById('statusMessage').innerHTML = '';
-                            document.getElementById('fraseUsuario').value = '';
-                            document.getElementById('sorteioSection').style.display = 'none';
-                            this.timeLeft = 10;
-                            this.gamePhase = 'prep';
-                            document.getElementById('timerLabel').textContent = 'Preparando...';
-                        }, 3000);
-                    }
-                }, 1000);
-            },
-            
-            enviarFrase: function() {
-                const frase = document.getElementById('fraseUsuario').value.trim();
-                
-                if (!frase) {
-                    alert('Escreva uma frase!');
-                    return;
-                }
-
-                const analise = this.analisarFrase(frase, this.categoria);
-                const pts = analise.correto ? 10 : 0;
-                this.pontos += pts;
-
-                if (this.firebaseReady && this.db && this.currentRoom) {
-                    const playerRef = this.db.ref(`salas/sala${this.currentRoom}/jogadores/${this.playerId}`);
-                    playerRef.update({ pontos: this.pontos }).catch(err => console.log('Erro ao atualizar pontos:', err));
-
-                    const historicoRef = this.db.ref(`salas/sala${this.currentRoom}/historico`).push();
-                    historicoRef.set({
-                        jogador: this.playerName,
-                        frase: frase,
-                        figura: this.categoria,
-                        palavra: this.palavra,
-                        correto: analise.correto,
-                        pontos: pts,
-                        analise: analise.motivo,
-                        timestamp: Date.now()
-                    }).catch(err => console.log('Erro ao salvar histórico:', err));
-                }
-
-                document.getElementById('fraseUsuario').disabled = true;
-                document.getElementById('submitBtn').disabled = true;
-                const statusText = analise.correto ? `✓ Correto! ${pts} pts` : `✗ Incorreto. ${analise.motivo}`;
-                document.getElementById('statusMessage').innerHTML = `<div class="status-message">${statusText}</div>`;
-            },
-            
-            atualizarJogadores: function(jogadores) {
-                const playersList = document.getElementById('playersList');
-                playersList.innerHTML = '';
-                
-                Object.values(jogadores).forEach(jogador => {
-                    const card = document.createElement('div');
-                    card.className = 'player-card';
-                    card.textContent = `${jogador.nome}`;
-                    playersList.appendChild(card);
-                });
-            },
-            
-            atualizarRanking: function(jogadores) {
-                const rankingBody = document.getElementById('rankingBody');
-                rankingBody.innerHTML = '';
-                
-                const jogadoresArray = Object.values(jogadores).sort((a, b) => b.pontos - a.pontos);
-                
-                jogadoresArray.forEach((jogador, index) => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>#${index + 1}</td>
-                        <td>${jogador.nome}</td>
-                        <td>${jogador.pontos}</td>
-                    `;
-                    rankingBody.appendChild(row);
-                });
-            },
-            
-            analisarFrase: function(frase, figura) {
-                const f = frase.toLowerCase();
-                const palavrasArray = frase.split(/\s+/).filter(p => p.length > 2);
-
-                if (frase.length < 10 || palavrasArray.length < 4) {
-                    return { correto: false, motivo: 'Frase muito curta' };
-                }
-
-                let pontuacao = 0;
-
-                switch(figura) {
-                    case "Metáfora":
-                        if (/\bé\b/.test(f)) pontuacao += 50;
-                        if (palavrasArray.length >= 6) pontuacao += 30;
-                        if (/\b(beleza|luz|escuridão|fogo|gelo|tempestade|oceano)\b/.test(f)) pontuacao += 20;
-                        break;
-                        
-                    case "Metonímia":
-                        if (/\b(lê|bebe|assiste|ouve|come|escreve|pensa)\b/.test(f)) pontuacao += 60;
-                        if (/\b(livro|vinho|filme|música|comida|ideia)\b/.test(f)) pontuacao += 30;
-                        if (palavrasArray.length >= 6) pontuacao += 10;
-                        break;
-                        
-                    case "Hipérbole":
-                        if (/\b(milhões|infinito|eternidade|nunca|sempre|morrer|explodir)\b/.test(f)) pontuacao += 60;
-                        if (/\b(muito|demais|extremamente|absurdamente)\b/.test(f)) pontuacao += 30;
-                        if (/\d+/.test(frase)) pontuacao += 20;
-                        break;
-                        
-                    case "Ironia":
-                        if (/\b(claro|óbvio|lógico|naturalmente|evidentemente)\b/.test(f)) pontuacao += 50;
-                        if (/[!?]{2,}/.test(frase)) pontuacao += 30;
-                        if (palavrasArray.length >= 6) pontuacao += 20;
-                        break;
-                        
-                    case "Personificação":
-                        if (/\b(dança|canta|chora|sorri|respira|pensa|sente|ama|odeia|sussurra)\b/.test(f)) pontuacao += 70;
-                        if (/\b(natureza|animal|objeto|coisa)\b/.test(f)) pontuacao += 20;
-                        break;
-                        
-                    case "Comparação":
-                        if (/\bcomo\b/.test(f)) pontuacao += 60;
-                        if (/\b(semelhante|parecido|igual)\b/.test(f)) pontuacao += 40;
-                        if (palavrasArray.length >= 6) pontuacao += 20;
-                        break;
-                        
-                    case "Antítese":
-                        if (/\b(mas|porém|contudo|todavia|entretanto)\b/.test(f)) pontuacao += 60;
-                        if (palavrasArray.length >= 6) pontuacao += 10;
-                        break;
-                        
-                    case "Aliteração":
-                        const palavras = frase.split(/\s+/);
-                        const primeirasLetras = palavras.map(p => p[0]);
-                        const repeticoes = primeirasLetras.filter((l, i) => i > 0 && l === primeirasLetras[i-1]).length;
-                        if (repeticoes >= 2) pontuacao += 70;
-                        break;
-                        
-                    case "Onomatopeia":
-                        if (/\b(buzz|bang|splash|crash|boom|zzzz|pum|bum|plim)\b/.test(f)) pontuacao += 80;
-                        if (/\b(som|ruído|barulho|estrondo)\b/.test(f)) pontuacao += 30;
-                        break;
-                        
-                    case "Paradoxo":
-                        if (/\b(verdade|mentira|morte|vida|silêncio|grito)\b/.test(f)) pontuacao += 40;
-                        if (/\b(mas|porém|contudo)\b/.test(f)) pontuacao += 30;
-                        if (palavrasArray.length >= 7) pontuacao += 20;
-                        break;
-                        
-                    case "Sinestesia":
-                        if (/\b(cor|som|gosto|cheiro|toque|quente|frio|doce|amargo|áspero|suave)\b/.test(f)) pontuacao += 50;
-                        break;
-                        
-                    case "Oximoro":
-                        if (/\b(silêncio|grito|morte|vida|escuridão|luz|fogo|gelo)\b/.test(f)) pontuacao += 40;
-                        if (palavrasArray.length >= 6) pontuacao += 20;
-                        break;
-                        
-                    case "Eufemismo":
-                        if (/\b(partir|descansar|dormir|ir|deixar|faltar)\b/.test(f)) pontuacao += 50;
-                        break;
-                        
-                    case "Litote":
-                        if (/\b(não é|não é tão|não é muito)\b/.test(f)) pontuacao += 60;
-                        if (/\b(nada|nenhum|nunca)\b/.test(f)) pontuacao += 30;
-                        break;
-                        
-                    case "Sinédoque":
-                        if (/\b(cabeça|mão|coração|alma|corpo)\b/.test(f)) pontuacao += 50;
-                        if (palavrasArray.length >= 6) pontuacao += 20;
-                        break;
-                        
-                    default:
-                        pontuacao = palavrasArray.length >= 5 ? 40 : 0;
-                }
-
-                if (palavrasArray.length >= 8) pontuacao += 10;
-                if (palavrasArray.length >= 10) pontuacao += 10;
-
-                const correto = pontuacao >= 50;
-                return { correto: correto, pontuacao: pontuacao, motivo: correto ? 'Frase válida!' : 'Frase não atende aos critérios' };
+            tema3: {
+                nome: '🌸 Natureza & Sentimentos',
+                palavras: ['Flor', 'Amor', 'Tristeza', 'Árvore', 'Pássaro', 'Estrela', 'Lua', 'Sol', 'Nuvem', 'Medo', 'Esperança', 'Raiva', 'Alegria', 'Saudade', 'Paz']
             }
         };
-        
-        // Inicializar Firebase quando a página carregar
-        window.addEventListener('load', function() {
-            gameApp.iniciarFirebase();
-        });
-        
-        // Limpar ao sair
-        window.addEventListener('beforeunload', function() {
-            if (gameApp.currentRoom && gameApp.firebaseReady && gameApp.db) {
-                const playerRef = gameApp.db.ref(`salas/sala${gameApp.currentRoom}/jogadores/${gameApp.playerId}`);
-                playerRef.remove().catch(err => console.log('Erro ao remover jogador:', err));
+
+        // Lista de figuras de linguagem
+        const figuras = [
+            'Metáfora', 'Metonímia', 'Hipérbole', 'Ironia', 'Personificação',
+            'Comparação', 'Antítese', 'Aliteração', 'Onomatopeia', 'Paradoxo',
+            'Sinestesia', 'Oximoro', 'Eufemismo', 'Litote', 'Sinédoque'
+        ];
+
+        function startGame() {
+            const name = document.getElementById('playerNameInput').value.trim();
+            if (name === '') {
+                alert('Digite seu nome!');
+                return;
             }
-        });
+            gameState.playerName = name;
+            
+            document.getElementById('loginScreen').classList.remove('active');
+            document.getElementById('roomsScreen').classList.add('active');
+        }
+
+        function enterRoom(roomId) {
+            gameState.currentRoom = roomId;
+            gameState.tema = temas[roomId].nome;
+            
+            sortearNovaRodada();
+            
+            document.getElementById('roomsScreen').classList.remove('active');
+            document.getElementById('gameScreen').classList.add('active');
+            
+            document.getElementById('playerDisplay').textContent = gameState.playerName;
+            document.getElementById('roomTitle').textContent = gameState.tema;
+            document.getElementById('fraseUsuario').value = '';
+            document.getElementById('feedback').innerHTML = '';
+        }
+
+        function sortearNovaRodada() {
+            gameState.figura = figuras[Math.floor(Math.random() * figuras.length)];
+            const palavrasList = temas[gameState.currentRoom].palavras;
+            gameState.palavra = palavrasList[Math.floor(Math.random() * palavrasList.length)];
+            
+            document.getElementById('figuraDisplay').textContent = gameState.figura;
+            document.getElementById('palavraDisplay').textContent = gameState.palavra;
+        }
+
+        function submitFrase() {
+            const frase = document.getElementById('fraseUsuario').value.trim();
+            if (frase === '') {
+                alert('Escreva uma frase!');
+                return;
+            }
+
+            const isCorrect = analisarFrase(frase, gameState.figura, gameState.palavra);
+            
+            // Mostrar feedback
+            const feedbackDiv = document.getElementById('feedback');
+            feedbackDiv.className = `feedback ${isCorrect ? 'correto' : 'incorreto'}`;
+            
+            if (isCorrect) {
+                feedbackDiv.innerHTML = `
+                    <strong>✓ Correto! Parabéns!</strong>
+                    <div class="feedback-message">
+                        Sua frase usa corretamente a figura de linguagem <strong>${gameState.figura}</strong> 
+                        com a palavra <strong>${gameState.palavra}</strong>. Excelente trabalho!
+                    </div>
+                `;
+            } else {
+                feedbackDiv.innerHTML = `
+                    <strong>✗ Incorreto</strong>
+                    <div class="feedback-message">
+                        Sua frase não usa corretamente a figura de linguagem <strong>${gameState.figura}</strong>. 
+                        Tente novamente com uma frase que melhor represente essa figura!
+                    </div>
+                `;
+            }
+
+            document.getElementById('fraseUsuario').value = '';
+        }
+
+        function analisarFrase(frase, figura, palavra) {
+            const fraseMinuscula = frase.toLowerCase();
+            const palavraMinuscula = palavra.toLowerCase();
+
+            // Verificar se contém a palavra
+            if (!fraseMinuscula.includes(palavraMinuscula)) {
+                return false;
+            }
+
+            // Verificar características da figura
+            switch(figura) {
+                case 'Metáfora':
+                    return fraseMinuscula.includes(' é ') && frase.length > 20;
+                case 'Metonímia':
+                    return /\b(lê|bebe|assiste|come|vê|escreve|toca)\b/.test(fraseMinuscula);
+                case 'Hipérbole':
+                    return /\b(milhão|bilhão|infinito|nunca|sempre|tudo|nada|morrer)\b/.test(fraseMinuscula);
+                case 'Ironia':
+                    return /\b(claro|óbvio|lógico|é verdade|com certeza|que legal)\b/.test(fraseMinuscula);
+                case 'Personificação':
+                    return /\b(dança|canta|chora|sorri|corre|voa|pensa|respira|acorda)\b/.test(fraseMinuscula);
+                case 'Comparação':
+                    return fraseMinuscula.includes(' como ');
+                case 'Antítese':
+                    return /\b(mas|porém|contudo|entretanto|todavia|porém)\b/.test(fraseMinuscula);
+                case 'Aliteração':
+                    return /([a-z])\1{1,}/.test(fraseMinuscula) || /\b\w+\s+\w+\s+\w+/.test(fraseMinuscula);
+                case 'Onomatopeia':
+                    return /\b(boom|bang|splash|buzz|zzzz|pum|bum|crash|pop|tic|tac)\b/.test(fraseMinuscula);
+                case 'Paradoxo':
+                    return frase.length > 30;
+                case 'Sinestesia':
+                    return /\b(cor|som|sabor|textura|aroma|gosto|toque|visão|audição)\b/.test(fraseMinuscula);
+                case 'Oximoro':
+                    return /\b(silêncio|escuridão|morte|vivo|quente|frio|amargo|doce)\b/.test(fraseMinuscula);
+                case 'Eufemismo':
+                    return /\b(partir|descansar|dormir|ir embora|passar|deixar)\b/.test(fraseMinuscula);
+                case 'Litote':
+                    return /\b(não é ruim|não é feio|não é mal|não é pequeno)\b/.test(fraseMinuscula);
+                case 'Sinédoque':
+                    return /\b(cabeça|mão|coração|corpo|alma|rosto|olho)\b/.test(fraseMinuscula);
+                default:
+                    return frase.length > 20;
+            }
+        }
+
+        function novaRodada() {
+            sortearNovaRodada();
+            document.getElementById('fraseUsuario').value = '';
+            document.getElementById('feedback').innerHTML = '';
+            document.getElementById('fraseUsuario').focus();
+        }
+
+        function goBackToRooms() {
+            document.getElementById('gameScreen').classList.remove('active');
+            document.getElementById('roomsScreen').classList.add('active');
+            document.getElementById('fraseUsuario').value = '';
+            document.getElementById('feedback').innerHTML = '';
+        }
     </script>
 </body>
 </html>
